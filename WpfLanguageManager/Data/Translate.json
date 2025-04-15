@@ -1,0 +1,74 @@
+{
+  "Types": [
+    {
+      "Value": "zh-CN",
+      "Text": "中文"
+    },
+    {
+      "Value": "en-US",
+      "Text": "English"
+    }
+  ],
+  "Data": {
+    "工具栏A": [
+      null,
+      "Tool A"
+    ],
+    "工具栏B": [
+      null,
+      "Tool B"
+    ],
+    "工具栏C": [
+      null,
+      "Tool C"
+    ],
+    "工具栏D": [
+      null,
+      "Tool D"
+    ],
+    "节点0": [
+      null,
+      "Node 0"
+    ],
+    "节点1": [
+      null,
+      "Node 1"
+    ],
+    "节点2": [
+      null,
+      "Node 2"
+    ],
+    "节点3": [
+      null,
+      "Node 3"
+    ],
+    "收集文本": [
+      null,
+      "Collect text"
+    ],
+    "新建窗体": [
+      null,
+      "New Form"
+    ],
+    "选项A": [
+      null,
+      "Option A"
+    ],
+    "选项B": [
+      null,
+      "Option B"
+    ],
+    "演示窗体": [
+      null,
+      "Demo Form"
+    ],
+    "页面A": [
+      null,
+      "Page A"
+    ],
+    "页面B": [
+      null,
+      "Page B"
+    ]
+  }
+}
