@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Demo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
         <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="216,163,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="comboBox_SelectionChanged">
+            <ComboBoxItem Content="ComboBoxItem0"/>
+            <ComboBoxItem Content="ComboBoxItem1"/>
         </ComboBox>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="489,174,0,0" VerticalAlignment="Top" Click="button_Click"/>
 
     </Grid>
 </Window>

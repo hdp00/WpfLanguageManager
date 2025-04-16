@@ -254,7 +254,7 @@ namespace MultiLanguage
 
             InitLanguageControl(value);
 
-            foreach (Control item in value.Controls)
+            foreach(FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
             {
                 InitLanguageFunc(item);
             }
@@ -263,7 +263,7 @@ namespace MultiLanguage
         {
             if (!_oper.InitLanguage(value))
             {
-                FillSourceDict(value.GetHashCode(), value.Text);
+                FillSourceDict(value.GetHashCode(), GetControlText(value));
             }
         }
         internal void FillSourceDict(int hash, params string[] texts)
@@ -296,7 +296,7 @@ namespace MultiLanguage
 
             ChangeLanguageControl(value);
 
-            foreach (Control item in value.Controls)
+            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
             {
                 ChangeLanguageFunc(item);
             }
@@ -355,7 +355,7 @@ namespace MultiLanguage
         {
             _dynamicFormDict.Remove(sender.GetHashCode());
         }
-        private bool IsDynamicForm(Control value)
+        private bool IsDynamicForm(FrameworkElement value)
         { 
             return (value is Window) && _dynamicFormDict.ContainsKey(value.GetHashCode());
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -31,18 +32,11 @@ namespace Demo
                 new Person { Name = "Sam Brown", Age = 35 }
             };
 
-            comboBox.ItemsSource = people;
-            comboBox.DisplayMemberPath = "Name";
-            comboBox.SelectedValuePath = "Age";
+            //comboBox.ItemsSource = people;
+            //comboBox.DisplayMemberPath = "Name";
+            //comboBox.SelectedValuePath = "Age";
 
             Button b = new Button();
-
-            foreach (Control o in FindVisualChildren<Control>(b))
-            {
-                int i = 5;
-            }
-            int j = 6;
-
         }
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -61,7 +55,23 @@ namespace Demo
                 {
                     yield return t;
                 }
+
+                foreach (var descendant in FindVisualChildren<T>(child))
+                {
+                    yield return descendant;
+                }
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<Control> cs = FindVisualChildren<Control>(this).ToList();
+
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 
