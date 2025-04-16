@@ -1,21 +1,12 @@
 ﻿//多语言管理类
 //by hdp 2024.12.22
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Xml.Linq;
-using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Policy;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Reflection;
 using System.Windows.Media;
 
 namespace MultiLanguage
@@ -301,14 +292,14 @@ namespace MultiLanguage
                 ChangeLanguageFunc(item);
             }
 
-            (value as ILanguageForm)?.ChangeLanguage();
+            (value as ILanguageForm)?.OnChangeLanguage();
         }
         private void ChangeLanguageControl(FrameworkElement value)
         {
             if (!_oper.ChangeLanguage(value))
             {
                 if (GetSourceText(value.GetHashCode(), out string[] texts))
-                    value.Text = TranslateText(texts[0]);
+                    SetControlText(value, texts[0]);
             }
         }
         internal bool GetSourceText(int hash, out string[] texts)
@@ -342,7 +333,7 @@ namespace MultiLanguage
         {
             DynamicFormManager m = new DynamicFormManager(this, value);
             _dynamicFormDict[value.GetHashCode()] = m;
-            value.FormClosed += DynamicFormClosed;
+            value.Closed += DynamicFormClosed;
 
             return m;
         }
@@ -351,7 +342,7 @@ namespace MultiLanguage
             return new DynamicFormManager(this, value);
         }
 
-        private void DynamicFormClosed(object sender, FormClosedEventArgs e)
+        private void DynamicFormClosed(object sender, EventArgs e)
         {
             _dynamicFormDict.Remove(sender.GetHashCode());
         }

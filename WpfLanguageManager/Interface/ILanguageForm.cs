@@ -10,6 +10,6 @@ namespace MultiLanguage
 {
     public interface ILanguageForm
     {
-        void ChangeLanguage();
+        void OnChangeLanguage();
     }
 }
