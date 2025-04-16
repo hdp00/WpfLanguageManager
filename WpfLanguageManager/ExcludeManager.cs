@@ -1,10 +1,7 @@
 ﻿//排除/包含需要翻译的控件
 //by hdp 2025.01.02
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace MultiLanguage
@@ -41,17 +38,7 @@ namespace MultiLanguage
         #endregion
 
         #region private function
-        private string GetName(object value)
-        {
-            if (value is Control)
-                return ((Control)value).Name;
-            if (value is ToolStripItem)
-                return ((ToolStripItem)value).Name;
-            if (value is TreeNode)
-                return ((TreeNode)value).Name;
-
-            return null;
-        }
+        private string GetName(object value) => (value as FrameworkElement)?.Name;
         #endregion
 
         #region add include | exclude

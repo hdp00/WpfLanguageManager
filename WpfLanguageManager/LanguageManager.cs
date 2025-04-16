@@ -13,6 +13,10 @@ using System.Diagnostics.Eventing.Reader;
 using System.Security.Policy;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Reflection;
+using System.Windows.Media;
 
 namespace MultiLanguage
 {
@@ -76,9 +80,76 @@ namespace MultiLanguage
             return text;
         }
         //初始化语言切换控件
-        public void InitLanguageSelectComboBox(Form main, ComboBox comboBox)
+        public void InitLanguageSelectComboBox(Window main, ComboBox comboBox)
         { 
             new LanguageSelectCombox(this, main, comboBox);
+        }
+
+        public string GetControlText(object item)
+        {
+            switch(item)
+            {
+                case TextBox textBox:
+                    {
+                        if (textBox.Text is string s)
+                            return s;
+                    }
+                    break;
+                case TextBlock textBlock:
+                    {
+                        if (textBlock.Text is string s)
+                            return s;
+                    }
+                    break;
+                case HeaderedItemsControl header:
+                    {
+                        if (header.Header is string s)
+                            return s;
+                    }
+                    break;
+                case ContentControl content:
+                    { 
+                        if (content.Content is string s)
+                            return s;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            return null;
+        }
+        public void SetControlText(object item, string text)
+        {
+            switch (item)
+            {
+                case TextBox textBox:
+                    {
+                        if (textBox.Text is string s)
+                            textBox.Text = s;
+                    }
+                    break;
+                case TextBlock textBlock:
+                    {
+                        if (textBlock.Text is string s)
+                            textBlock.Text = s;
+                    }
+                    break;
+                case HeaderedItemsControl header:
+                    {
+                        if (header.Header is string s)
+                            header.Header = s;             
+                    }
+                    break;
+                case ContentControl content:
+                    {
+                        if (content.Content is string s)
+                            content.Content = s;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
         #endregion
 
@@ -87,10 +158,23 @@ namespace MultiLanguage
         {
             LoadTranslateData();
         }
+        private IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) yield break;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T t)
+                {
+                    yield return t;
+                }
+            }
+        }
         #endregion
 
         #region translate data. 翻译数据的读取/保存
-        private string TranslateFileName => Path.Combine(Application.StartupPath, "Translate.json");
+        private string TranslateFileName => Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Translate.json");
         private void LoadTranslateData()
         {
             try
@@ -119,29 +203,27 @@ namespace MultiLanguage
         #endregion
 
         #region collect text. 收集需要翻译的信息
-        public void CollectText(Control value)
+        public void CollectText(FrameworkElement value)
         {
             CollectTextFunc(value);
         }
-        private void CollectTextFunc(Control value)
+        private void CollectTextFunc(FrameworkElement value)
         {
             if (!CurrentExclude.IsValid(value))
                 return;
 
             CollectTextControl(value);
 
-            if (value is ToolStrip)
-                return;
-            foreach (Control item in value.Controls)
+            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
             {
                 CollectTextFunc(item);
             }
         }
-        private void CollectTextControl(Control value)
+        private void CollectTextControl(FrameworkElement value)
         {
             if (!_oper.CollectText(value))
             {
-                FillTranslateDict(value.Text);
+                FillTranslateDict(GetControlText(value));
             }
         }
 
@@ -158,12 +240,12 @@ namespace MultiLanguage
         #endregion
 
         #region  init language 获取所有控件的初始文本
-        public void InitLanguage(Control value)
+        public void InitLanguage(FrameworkElement value)
         {
             InitLanguageFunc(value);
         }
 
-        internal void InitLanguageFunc(Control value)
+        internal void InitLanguageFunc(FrameworkElement value)
         {
             if (!CurrentExclude.IsValid(value))
                 return;
@@ -172,14 +254,12 @@ namespace MultiLanguage
 
             InitLanguageControl(value);
 
-            if (value is ToolStrip)
-                return;
             foreach (Control item in value.Controls)
             {
                 InitLanguageFunc(item);
             }
         }
-        private void InitLanguageControl(Control value)
+        private void InitLanguageControl(FrameworkElement value)
         {
             if (!_oper.InitLanguage(value))
             {
@@ -196,7 +276,7 @@ namespace MultiLanguage
         #endregion
 
         #region change language 切换语言
-        public void ChangeLanguage(Control value)
+        public void ChangeLanguage(FrameworkElement value)
         {
             _isChangingLanguage = true;
 
@@ -206,7 +286,7 @@ namespace MultiLanguage
             _isChangingLanguage = false;
         }
 
-        internal void ChangeLanguageFunc(Control value)
+        internal void ChangeLanguageFunc(FrameworkElement value)
         {
             if (!CurrentExclude.IsValid(value))
                 return;
@@ -216,8 +296,6 @@ namespace MultiLanguage
 
             ChangeLanguageControl(value);
 
-            if (value is ToolStrip)
-                return;
             foreach (Control item in value.Controls)
             {
                 ChangeLanguageFunc(item);
@@ -225,7 +303,7 @@ namespace MultiLanguage
 
             (value as ILanguageForm)?.ChangeLanguage();
         }
-        private void ChangeLanguageControl(Control value)
+        private void ChangeLanguageControl(FrameworkElement value)
         {
             if (!_oper.ChangeLanguage(value))
             {
@@ -260,7 +338,7 @@ namespace MultiLanguage
         //动态窗体字典 [form_hash, DynamicFormManager]
         private Dictionary<int, DynamicFormManager> _dynamicFormDict = new Dictionary<int, DynamicFormManager>();
 
-        public DynamicFormManager InitDynamicForm(Form value)
+        public DynamicFormManager InitDynamicForm(Window value)
         {
             DynamicFormManager m = new DynamicFormManager(this, value);
             _dynamicFormDict[value.GetHashCode()] = m;
@@ -268,7 +346,7 @@ namespace MultiLanguage
 
             return m;
         }
-        public DynamicFormManager InitDialog(Form value)
+        public DynamicFormManager InitDialog(Window value)
         {
             return new DynamicFormManager(this, value);
         }
@@ -279,7 +357,7 @@ namespace MultiLanguage
         }
         private bool IsDynamicForm(Control value)
         { 
-            return (value is Form) && _dynamicFormDict.ContainsKey(value.GetHashCode());
+            return (value is Window) && _dynamicFormDict.ContainsKey(value.GetHashCode());
         }
         private void ChangeLanguageAllDynamicForm()
         {

@@ -57,10 +57,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlOperation.cs" />
     <Compile Include="Data\TranslateData.cs" />
+    <Compile Include="DynamicFormManager.cs" />
     <Compile Include="ExcludeManager.cs" />
     <Compile Include="Interface\ILanguageForm.cs" />
     <Compile Include="LanguageManager.cs" />
+    <Compile Include="LanguageSelectCombox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
