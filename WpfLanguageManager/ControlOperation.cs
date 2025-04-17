@@ -108,6 +108,9 @@ namespace MultiLanguage
             if (!Container.Exclude.IsValid(value))
                 return;
 
+            //tree || list
+            Container.FillSourceDict(value.GetHashCode(), Container.GetControlText(value));
+
             List<string> strList = new List<string>();
             //Items中包含控件，也包含string
             if (value is ItemsControl items)
@@ -128,6 +131,7 @@ namespace MultiLanguage
                     }
                 }
 
+                //list
                 if (strList.Exists(x => x != null))
                     Container.FillSourceDict(value.GetHashCode(), strList.ToArray());
             }
@@ -146,6 +150,13 @@ namespace MultiLanguage
             if (!Container.Exclude.IsValid(value))
                 return;
 
+            //tree || list
+            {
+                if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
+                    Container.SetControlText(value, texts);
+            }
+
+
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
@@ -153,6 +164,7 @@ namespace MultiLanguage
                     ChangeLanguageItem(item);
                 }
 
+                //list
                 if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
                 {
                     int count = Math.Min(items.Items.Count, texts.Length);
