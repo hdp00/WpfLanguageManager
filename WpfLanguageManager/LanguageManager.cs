@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace MultiLanguage
@@ -87,21 +88,26 @@ namespace MultiLanguage
             switch (control)
             {
                 case TextBox textBox:
-                    texts[0] = textBox.Text;
+                    if (!IsPropertyBound(textBox, TextBox.TextProperty))
+                        texts[0] = textBox.Text;
                     break;
                 case TextBlock textBlock:
-                    texts[0] = textBlock.Text;
+                    if (!IsPropertyBound(textBlock, TextBlock.TextProperty))
+                        texts[0] = textBlock.Text;
                     break;
                 case HeaderedItemsControl header:
+                    if (!IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
                     {
                         if (header.Header is string s)
                             texts[0] = s;
                     }
                     break;
                 case Window window:
-                    texts[0] = window.Title;
+                    if (!IsPropertyBound(window, Window.TitleProperty))
+                        texts[0] = window.Title;
                     break;
                 case ContentControl content:
+                    if (!IsPropertyBound(content, ContentControl.ContentProperty))
                     {
                         if (content.Content is string s)
                             texts[0] = s;
@@ -111,6 +117,7 @@ namespace MultiLanguage
                     break;
             }
 
+            if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
             {
                 if (framework.ToolTip is string s)
                     texts[1] = s;
@@ -122,37 +129,52 @@ namespace MultiLanguage
         {
             //text, tooltip
             string s = TranslateText(texts[0]);
-            switch (control)
+            if (!string.IsNullOrWhiteSpace(s))
             {
-                case TextBox textBox:
-                    textBox.Text = s;
-                    break;
-                case TextBlock textBlock:
-                    textBlock.Text = s;
-                    break;
-                case HeaderedItemsControl header:
-                    {
-                        if (header.Header is string)
-                            header.Header = s;
-                    }
-                    break;
-                case Window window:
-                    window.Title = s;
-                    break;
-                case ContentControl content:
-                    {
-                        if (content.Content is string)
-                            content.Content = s;
-                    }
-                    break;
-                default:
-                    break;
+                switch (control)
+                {
+                    case TextBox textBox:
+                        if (!IsPropertyBound(textBox, TextBox.TextProperty))
+                            textBox.Text = s;
+                        break;
+                    case TextBlock textBlock:
+                        if (!IsPropertyBound(textBlock, TextBlock.TextProperty))
+                            textBlock.Text = s;
+                        break;
+                    case HeaderedItemsControl header:
+                        if (!IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
+                        {
+                            if (header.Header is string)
+                                header.Header = s;
+                        }
+                        break;
+                    case Window window:
+                        if (!IsPropertyBound(window, Window.TitleProperty))
+                            window.Title = s;
+                        break;
+                    case ContentControl content:
+                        if (!IsPropertyBound(content, ContentControl.ContentProperty))
+                        { 
+                            if (content.Content is string)
+                                content.Content = s;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             if (control is FrameworkElement framework)
             {
-                if (framework.ToolTip is string)
-                    framework.ToolTip = TranslateText(texts[1]);
+                string s1 = TranslateText(texts[1]);
+                if (!string.IsNullOrWhiteSpace(s1))
+                {
+                    if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
+                    {
+                        if (framework.ToolTip is string)
+                            framework.ToolTip = TranslateText(texts[1]);
+                    }
+                }
             }
         }
         #endregion
@@ -174,6 +196,10 @@ namespace MultiLanguage
                     yield return t;
                 }
             }
+        }
+        private bool IsPropertyBound(DependencyObject obj, DependencyProperty property)
+        {
+            return BindingOperations.IsDataBound(obj, property);
         }
         #endregion
 

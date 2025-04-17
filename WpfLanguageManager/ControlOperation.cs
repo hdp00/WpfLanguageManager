@@ -1,5 +1,7 @@
 ﻿//控件操作类
 //by hdp 2025.01.01
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -72,16 +74,23 @@ namespace MultiLanguage
         }
         private void CollectTextItem(object value)
         {
-            if (!Container.Exclude.IsValid(value))
-                return;
-
-            Container.FillTranslateDict(Container.GetControlText(value));
-
-            if (value is ItemsControl items)
+            if (value is string s)
             {
-                foreach (object item in items.Items)
+                Container.FillTranslateDict(s);
+            }
+            else
+            {
+                if (!Container.Exclude.IsValid(value))
+                    return;
+
+                Container.FillTranslateDict(Container.GetControlText(value));
+
+                if (value is ItemsControl items)
                 {
-                    CollectTextItem(item);
+                    foreach (object item in items.Items)
+                    {
+                        CollectTextItem(item);
+                    }
                 }
             }
         }
@@ -94,17 +103,33 @@ namespace MultiLanguage
         }
         private void InitLanguageItem(object value)
         {
+            if (!(value is Control))
+                return;
             if (!Container.Exclude.IsValid(value))
                 return;
 
-            Container.FillSourceDict(value.GetHashCode(), Container.GetControlText(value));
-
+            List<string> strList = new List<string>();
+            //Items中包含控件，也包含string
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
                 {
-                    InitLanguageItem(item);
+                    if (item is string s)
+                    {
+                        if (!string.IsNullOrWhiteSpace(s))
+                            strList.Add(s);
+                        else
+                            strList.Add(null);
+                    }
+                    else
+                    {
+                        InitLanguageItem(item);
+                        strList.Add(null);
+                    }
                 }
+
+                if (strList.Exists(x => x != null))
+                    Container.FillSourceDict(value.GetHashCode(), strList.ToArray());
             }
         }
         #endregion
@@ -112,21 +137,31 @@ namespace MultiLanguage
         #region change language
         public void ChangeLanguage(ItemsControl value)
         {
-            ChangeLanguaeItem(value);
+            ChangeLanguageItem(value);
         }
-        private void ChangeLanguaeItem(object value)
+        private void ChangeLanguageItem(object value)
         {
+            if (!(value is Control))
+                return;
             if (!Container.Exclude.IsValid(value))
                 return;
-
-            if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
-                Container.SetControlText(value, texts);
 
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
                 {
-                    ChangeLanguaeItem(item);
+                    ChangeLanguageItem(item);
+                }
+
+                if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
+                {
+                    int count = Math.Min(items.Items.Count, texts.Length);
+                    for (int i = 0; i < count; i++)
+                    {
+                        string s = Container.TranslateText(texts[i]);
+                        if (!string.IsNullOrWhiteSpace(s) && items.Items[i] is string)
+                            items.Items[i] = s;
+                    }
                 }
             }
         }

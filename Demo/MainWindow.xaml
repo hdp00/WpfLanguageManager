@@ -7,20 +7,27 @@
         mc:Ignorable="d"
         Title="演示窗体" Height="450" Width="800" Loaded="Window_Loaded">
     <DockPanel>
-        <!-- 工具栏停靠在顶部 -->
         <ToolBar DockPanel.Dock="Top">
             <ComboBox x:Name="cmb_Language" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120"/>
             <Separator/>
             <Menu>
-                <MenuItem Header="更多操作 ▼">
-                    <MenuItem Header="打印"/>
-                    <MenuItem Header="导出为 PDF"/>
-                    <Separator/>
-                    <MenuItem Header="设置"/>
+                <MenuItem Header="工具栏A" />
+                <MenuItem Header="工具栏B">
+                    <MenuItem Header="工具栏C"/>
+                    <MenuItem Header="工具栏D"/>
                 </MenuItem>
             </Menu>
         </ToolBar>
 
-        <Grid></Grid>
+        <Grid>
+            <Label x:Name="label" Content="标签" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.863,-6.471"/>
+            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="15,40,0,0" TextWrapping="Wrap" Text="文本" VerticalAlignment="Top" RenderTransformOrigin="1,0.507"/>
+            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="15,60,0,0" VerticalAlignment="Top" Width="120">
+                <ComboBoxItem Content="选项A"/>
+                <ComboBoxItem Content="选项B"/>
+            </ComboBox>
+            <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="15,105,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.568,2.3">
+            </ComboBox>
+        </Grid>
     </DockPanel>
 </Window>

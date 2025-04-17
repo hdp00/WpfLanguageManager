@@ -1,19 +1,8 @@
 ﻿using MultiLanguage;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Demo
 {
@@ -25,6 +14,27 @@ namespace Demo
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
+            //List<Person> list = new List<Person>()
+            //{
+            //    new Person("a", 0),
+            //    new Person("b", 1),
+            //    new Person("c", 2),
+            //};
+
+            List<string> list = new List<string>()
+            {
+                "a",
+                "b",
+                "c",
+            };
+
+            //ComboBoxItem
+            //TreeViewItem
+            //comboBox1.ItemsSource = list;
+            //comboBox1.DisplayMemberPath = "Name";
+            //comboBox1.DisplayMemberPath = "Id";
         }
 
         #region field
@@ -34,6 +44,8 @@ namespace Demo
         #region event
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            comboBox.Items.Add("工具栏A");
+
             InitLanguage();
         }
         #endregion
@@ -63,5 +75,24 @@ namespace Demo
             //lable_Additional.Text = _language.TranslateText("页面A");
         }
         #endregion
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+
+
+        }
+
+    }
+
+    public class Person
+    { 
+        public Person(string name, int id)
+        {
+            Name = name;
+            Id = id;
+        }   
+
+        public string Name { get; set; }
+        public int Id { get; set; }
     }
 }
