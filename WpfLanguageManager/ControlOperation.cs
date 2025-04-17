@@ -108,30 +108,29 @@ namespace MultiLanguage
             if (!Container.Exclude.IsValid(value))
                 return;
 
-            //tree || list
-            Container.FillSourceDict(value.GetHashCode(), Container.GetControlText(value));
+            //tree
+            if (value is HeaderedItemsControl)
+                Container.FillSourceDict(value.GetHashCode(), Container.GetControlText(value));
 
-            List<string> strList = new List<string>();
+            
             //Items中包含控件，也包含string
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
                 {
-                    if (item is string s)
-                    {
-                        if (!string.IsNullOrWhiteSpace(s))
-                            strList.Add(s);
-                        else
-                            strList.Add(null);
-                    }
-                    else
-                    {
-                        InitLanguageItem(item);
-                        strList.Add(null);
-                    }
+                    InitLanguageItem(item);
                 }
 
                 //list
+                List<string> strList = new List<string>();
+                foreach (object item in items.Items)
+                {
+                    if (item is string s && !string.IsNullOrWhiteSpace(s))
+                        strList.Add(s);
+                    else
+                        strList.Add(null);
+                }
+
                 if (strList.Exists(x => x != null))
                     Container.FillSourceDict(value.GetHashCode(), strList.ToArray());
             }
