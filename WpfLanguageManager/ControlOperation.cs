@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace MultiLanguage
 {
@@ -83,7 +84,19 @@ namespace MultiLanguage
                 if (!Container.Exclude.IsValid(value))
                     return;
 
-                Container.FillTranslateDict(Container.GetControlText(value));
+                if (value is Selector selector)
+                {
+                    if (selector.ItemsSource == null)
+                    {
+                        foreach (object item in selector.Items)
+                        {
+                            if (item is string itemText)
+                                Container.FillTranslateDict(itemText);
+                        }
+                    }
+                }
+                else
+                    Container.FillTranslateDict(Container.GetControlText(value));
 
                 if (value is ItemsControl items)
                 {
@@ -103,36 +116,38 @@ namespace MultiLanguage
         }
         private void InitLanguageItem(object value)
         {
-            if (!(value is Control))
+            if (!(value is FrameworkElement))
                 return;
             if (!Container.Exclude.IsValid(value))
                 return;
 
-            //tree
-            if (value is HeaderedItemsControl)
+            //list Items中包含控件，也包含string
+            if (value is Selector selector)
+            {
+                if (selector.ItemsSource == null)
+                {
+                    List<string> strList = new List<string>();
+                    foreach (object item in selector.Items)
+                    {
+                        if (item is string s && !string.IsNullOrWhiteSpace(s))
+                            strList.Add(s);
+                        else
+                            strList.Add(null);
+                    }
+
+                    if (strList.Exists(x => x != null))
+                        Container.FillSourceDict(value.GetHashCode(), strList.ToArray());
+                }
+            }
+            else
                 Container.FillSourceDict(value.GetHashCode(), Container.GetControlText(value));
 
-            
-            //Items中包含控件，也包含string
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
                 {
                     InitLanguageItem(item);
                 }
-
-                //list
-                List<string> strList = new List<string>();
-                foreach (object item in items.Items)
-                {
-                    if (item is string s && !string.IsNullOrWhiteSpace(s))
-                        strList.Add(s);
-                    else
-                        strList.Add(null);
-                }
-
-                if (strList.Exists(x => x != null))
-                    Container.FillSourceDict(value.GetHashCode(), strList.ToArray());
             }
         }
         #endregion
@@ -144,35 +159,39 @@ namespace MultiLanguage
         }
         private void ChangeLanguageItem(object value)
         {
-            if (!(value is Control))
+            if (!(value is FrameworkElement))
                 return;
             if (!Container.Exclude.IsValid(value))
                 return;
 
-            //tree || list
+            //list Items中包含控件，也包含string
+            if (value is Selector selector)
+            {
+                if (selector.ItemsSource == null)
+                {
+                    if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
+                    {
+                        int count = Math.Min(selector.Items.Count, texts.Length);
+                        for (int i = 0; i < count; i++)
+                        {
+                            string s = Container.TranslateText(texts[i]);
+                            if (!string.IsNullOrWhiteSpace(s) && selector.Items[i] is string)
+                                selector.Items[i] = s;
+                        }
+                    }
+                }
+            }
+            else
             {
                 if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
                     Container.SetControlText(value, texts);
             }
-
 
             if (value is ItemsControl items)
             {
                 foreach (object item in items.Items)
                 {
                     ChangeLanguageItem(item);
-                }
-
-                //list
-                if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
-                {
-                    int count = Math.Min(items.Items.Count, texts.Length);
-                    for (int i = 0; i < count; i++)
-                    {
-                        string s = Container.TranslateText(texts[i]);
-                        if (!string.IsNullOrWhiteSpace(s) && items.Items[i] is string)
-                            items.Items[i] = s;
-                    }
                 }
             }
         }

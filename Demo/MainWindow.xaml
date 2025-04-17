@@ -27,7 +27,16 @@
                 <ComboBoxItem Content="选项B"/>
             </ComboBox>
             <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="15,105,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.568,2.3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Id}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
+            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="528,244,0,0" VerticalAlignment="Top" Click="button_Click_1"/>
         </Grid>
     </DockPanel>
 </Window>
