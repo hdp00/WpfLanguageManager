@@ -23,6 +23,14 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+
+            object b = new Button();
+            switch (b)
+            {
+
+                default:
+                    break;
+            }
         }
     }
 }

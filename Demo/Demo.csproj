@@ -94,5 +94,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WpfLanguageManager\WpfLanguageManager.csproj">
+      <Project>{d7ce9b99-0c2e-4458-8df6-95d38d9b48bc}</Project>
+      <Name>WpfLanguageManager</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

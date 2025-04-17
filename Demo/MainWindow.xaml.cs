@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiLanguage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,65 +20,48 @@ namespace Demo
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ILanguageForm
     {
         public MainWindow()
         {
             InitializeComponent();
-
-            List<Person> people = new List<Person>
-            {
-                new Person { Name = "John Doe", Age = 30 },
-                new Person { Name = "Jane Smith", Age = 25 },
-                new Person { Name = "Sam Brown", Age = 35 }
-            };
-
-            //comboBox.ItemsSource = people;
-            //comboBox.DisplayMemberPath = "Name";
-            //comboBox.SelectedValuePath = "Age";
-
-            Button b = new Button();
         }
 
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        #region field
+        private LanguageManager _language = LanguageManager.Instance;
+        #endregion
 
-        }
-
-        private IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
-        {
-            if (parent == null) yield break;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T t)
-                {
-                    yield return t;
-                }
-
-                foreach (var descendant in FindVisualChildren<T>(child))
-                {
-                    yield return descendant;
-                }
-            }
-        }
-
+        #region event
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Control> cs = FindVisualChildren<Control>(this).ToList();
-
+            InitLanguage();
         }
+        #endregion
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        #region init
+        private void InitLanguage()
         {
-            
-        }
-    }
+            InitExcludeControl();
+            _language.InitLanguageSelectComboBox(this, cmb_Language);
 
-    public class Person
-    {
-        public string Name { get; set; } = "";
-        public int Age { get; set; }
+            //_language.CollectText(this);
+            //_language.SaveTranslateData();
+
+            _language.InitLanguage(this);
+            _language.ChangeLanguage(this);
+        }
+        private void InitExcludeControl()
+        {
+            _language.Exclude.ExcludeClass.TextBox = true;
+            _language.Exclude.AddExcludeName("cmb_Language", "group_Exclude");
+        }
+        #endregion
+
+        #region ILanguageForm
+        public void OnChangeLanguage()
+        {
+            //lable_Additional.Text = _language.TranslateText("页面A");
+        }
+        #endregion
     }
 }

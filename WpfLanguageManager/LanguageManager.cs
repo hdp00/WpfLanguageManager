@@ -64,7 +64,7 @@ namespace MultiLanguage
         {
             if (!string.IsNullOrEmpty(text) && TranslateDict.TryGetValue(text, out string[] texts))
             {
-                if (texts != null && texts.Length > _currentLanguageIndex && !string.IsNullOrWhiteSpace(texts[_currentLanguageIndex]))
+                if (texts?.Length > _currentLanguageIndex && !string.IsNullOrWhiteSpace(texts[_currentLanguageIndex]))
                     return texts[_currentLanguageIndex];
             }
 
@@ -72,74 +72,87 @@ namespace MultiLanguage
         }
         //初始化语言切换控件
         public void InitLanguageSelectComboBox(Window main, ComboBox comboBox)
-        { 
+        {
             new LanguageSelectCombox(this, main, comboBox);
         }
 
-        public string GetControlText(object item)
+        internal string[] GetControlText(object control)
         {
-            switch(item)
+            FrameworkElement framework = control as FrameworkElement;
+            if (framework == null)
+                return null;
+
+            //text, tooltip
+            string[] texts = new string[2];
+            switch (control)
             {
                 case TextBox textBox:
-                    {
-                        if (textBox.Text is string s)
-                            return s;
-                    }
+                    texts[0] = textBox.Text;
                     break;
                 case TextBlock textBlock:
-                    {
-                        if (textBlock.Text is string s)
-                            return s;
-                    }
+                    texts[0] = textBlock.Text;
                     break;
                 case HeaderedItemsControl header:
                     {
                         if (header.Header is string s)
-                            return s;
+                            texts[0] = s;
                     }
                     break;
+                case Window window:
+                    texts[0] = window.Title;
+                    break;
                 case ContentControl content:
-                    { 
+                    {
                         if (content.Content is string s)
-                            return s;
+                            texts[0] = s;
                     }
                     break;
                 default:
                     break;
             }
 
-            return null;
+            {
+                if (framework.ToolTip is string s)
+                    texts[1] = s;
+            }
+
+            return texts;
         }
-        public void SetControlText(object item, string text)
+        internal void SetControlText(object control, string[] texts)
         {
-            switch (item)
+            //text, tooltip
+            string s = TranslateText(texts[0]);
+            switch (control)
             {
                 case TextBox textBox:
-                    {
-                        if (textBox.Text is string s)
-                            textBox.Text = s;
-                    }
+                    textBox.Text = s;
                     break;
                 case TextBlock textBlock:
-                    {
-                        if (textBlock.Text is string s)
-                            textBlock.Text = s;
-                    }
+                    textBlock.Text = s;
                     break;
                 case HeaderedItemsControl header:
                     {
-                        if (header.Header is string s)
-                            header.Header = s;             
+                        if (header.Header is string)
+                            header.Header = s;
                     }
+                    break;
+                case Window window:
+                    window.Title = s;
                     break;
                 case ContentControl content:
                     {
-                        if (content.Content is string s)
+                        if (content.Content is string)
                             content.Content = s;
                     }
                     break;
                 default:
                     break;
+            }
+
+            if (control is FrameworkElement framework)
+            {
+                if (framework.ToolTip is string)
+                    framework.ToolTip = TranslateText(texts[1]);
             }
         }
         #endregion
@@ -245,7 +258,7 @@ namespace MultiLanguage
 
             InitLanguageControl(value);
 
-            foreach(FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
+            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
             {
                 InitLanguageFunc(item);
             }
@@ -299,7 +312,7 @@ namespace MultiLanguage
             if (!_oper.ChangeLanguage(value))
             {
                 if (GetSourceText(value.GetHashCode(), out string[] texts))
-                    SetControlText(value, texts[0]);
+                    SetControlText(value, texts);
             }
         }
         internal bool GetSourceText(int hash, out string[] texts)
@@ -347,7 +360,7 @@ namespace MultiLanguage
             _dynamicFormDict.Remove(sender.GetHashCode());
         }
         private bool IsDynamicForm(FrameworkElement value)
-        { 
+        {
             return (value is Window) && _dynamicFormDict.ContainsKey(value.GetHashCode());
         }
         private void ChangeLanguageAllDynamicForm()

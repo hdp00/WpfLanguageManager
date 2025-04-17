@@ -120,7 +120,7 @@ namespace MultiLanguage
                 return;
 
             if (Container.GetSourceText(value.GetHashCode(), out string[] texts))
-                Container.SetControlText(value, texts[0]);
+                Container.SetControlText(value, texts);
 
             if (value is ItemsControl items)
             {

@@ -69,6 +69,14 @@
     "页面B": [
       null,
       "Page B"
+    ],
+    "标签": [
+      null,
+      "Label"
+    ],
+    "文本": [
+      null,
+      "Text"
     ]
   }
 }

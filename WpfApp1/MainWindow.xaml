@@ -6,7 +6,34 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    <DockPanel>
+        <!-- 工具栏停靠在顶部 -->
+        <ToolBar DockPanel.Dock="Top">
+            <!-- 带图标的按钮 -->
+            <Button ToolTip="新建文件">
+                <Image Width="16" Height="16"/>
+            </Button>
+            <Button ToolTip="打开文件">
+                <Image Width="16" Height="16"/>
+            </Button>
+
+            <!-- 分隔符 -->
+            <Separator/>
+
+            <!-- 文字按钮 -->
+            <Button Content="保存"/>
+            <Button Content="另存为..."/>
+            <Menu>
+                <MenuItem Header="更多操作 ▼">
+                    <MenuItem Header="打印"/>
+                    <MenuItem Header="导出为 PDF"/>
+                    <Separator/>
+                    <MenuItem Header="设置"/>
+                </MenuItem>
+            </Menu>
+        </ToolBar>
+
+        <!-- 其他内容 -->
+        <Grid></Grid>
+    </DockPanel>
 </Window>
