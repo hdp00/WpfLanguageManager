@@ -1,12 +1,14 @@
 ﻿//多语言管理类
-//by hdp 2024.12.22
+//by hdp 2025.04.18
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -55,8 +57,6 @@ namespace MultiLanguage
         private Dictionary<string, string[]> TranslateDict => _translateData.Data;
         //<hash, texts> 初始的文本数据
         private Dictionary<int, string[]> _sourceDict = new Dictionary<int, string[]>();
-        //控件操作
-        private ControlOperationManager _oper => new ControlOperationManager(this);
         #endregion
 
         #region public function
@@ -76,17 +76,72 @@ namespace MultiLanguage
         {
             new LanguageSelectCombox(this, main, comboBox);
         }
+        #endregion
 
-        internal string[] GetControlText(object control)
+        #region private function
+        private void Init()
         {
+            LoadTranslateData();
+        }
+        private IEnumerable<T> FindLogicalChildren<T>(DependencyObject parent, bool IsOperatingMainForm = false) where T : DependencyObject
+        {
+            if (parent == null) yield break;
+            if (!CurrentExclude.IsValid(parent)) yield break;
+            if (IsOperatingMainForm && IsDynamicForm(parent as FrameworkElement)) yield break;
+
+            foreach (var child in LogicalTreeHelper.GetChildren(parent))
+            {
+                if (child is T t)
+                {
+                    yield return t;
+                }
+                foreach (var descendant in FindLogicalChildren<T>(child as DependencyObject, IsOperatingMainForm))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+        private bool IsPropertyBound(DependencyObject obj, DependencyProperty property)
+        {
+            return BindingOperations.IsDataBound(obj, property);
+        }
+        #endregion
+
+        #region control text
+        private string[] GetControlText(object control)
+        {
+            //所有控件都有text，tooltip
+            //list & tree, 还需要添加列表项中的文本
             FrameworkElement framework = control as FrameworkElement;
             if (framework == null)
                 return null;
 
             //text, tooltip
-            string[] texts = new string[2];
+            List<string> texts = new List<string> { null, null };
+
+            if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
+            {
+                if (framework.ToolTip is string s)
+                    texts[1] = s;
+            }
+
             switch (control)
             {
+                //list
+                case Selector selector:
+                    if (selector.ItemsSource == null)
+                        texts.AddRange(GetItemText(selector));
+                    break;
+                //tree 
+                case HeaderedItemsControl header:
+                    if (header.ItemsSource == null && !IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
+                    {
+                        if (header.Header is string sHeader)
+                            texts[0] = sHeader;
+
+                        texts.AddRange(GetItemText(header));
+                    }
+                    break;
                 case TextBox textBox:
                     if (!IsPropertyBound(textBox, TextBox.TextProperty))
                         texts[0] = textBox.Text;
@@ -94,13 +149,6 @@ namespace MultiLanguage
                 case TextBlock textBlock:
                     if (!IsPropertyBound(textBlock, TextBlock.TextProperty))
                         texts[0] = textBlock.Text;
-                    break;
-                case HeaderedItemsControl header:
-                    if (!IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
-                    {
-                        if (header.Header is string s)
-                            texts[0] = s;
-                    }
                     break;
                 case Window window:
                     if (!IsPropertyBound(window, Window.TitleProperty))
@@ -117,89 +165,101 @@ namespace MultiLanguage
                     break;
             }
 
-            if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
+            return texts.ToArray();
+        }
+        private void SetControlText(object control, string[] texts)
+        {
+            //所有控件都有text，tooltip
+            //list & tree, 还需要添加列表项中的文本
+            FrameworkElement framework = control as FrameworkElement;
+            if (framework == null)
+                return;
+
+            string sTooltip = TranslateText(texts[1]);
+            if (!string.IsNullOrWhiteSpace(sTooltip))
             {
-                if (framework.ToolTip is string s)
-                    texts[1] = s;
+                if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
+                {
+                    if (framework.ToolTip is string)
+                        framework.ToolTip = sTooltip;
+                }
             }
 
-            return texts;
-        }
-        internal void SetControlText(object control, string[] texts)
-        {
-            //text, tooltip
-            string s = TranslateText(texts[0]);
-            if (!string.IsNullOrWhiteSpace(s))
+            //itmes
+            switch (control)
+            {
+                //list
+                case Selector selector:
+                    if (selector.ItemsSource == null)
+                        SetItemText(selector, texts);
+                    break;
+                //tree 
+                case HeaderedItemsControl header:
+                    if (header.ItemsSource == null && !IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
+                        SetItemText(header, texts);
+                    break;
+                default:
+                    break;
+            }
+
+            string sText = TranslateText(texts[0]);
+            if (!string.IsNullOrWhiteSpace(sText))
             {
                 switch (control)
                 {
                     case TextBox textBox:
                         if (!IsPropertyBound(textBox, TextBox.TextProperty))
-                            textBox.Text = s;
+                            textBox.Text = sText;
                         break;
                     case TextBlock textBlock:
                         if (!IsPropertyBound(textBlock, TextBlock.TextProperty))
-                            textBlock.Text = s;
+                            textBlock.Text = sText;
                         break;
                     case HeaderedItemsControl header:
                         if (!IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
                         {
                             if (header.Header is string)
-                                header.Header = s;
+                                header.Header = sText;
                         }
                         break;
                     case Window window:
                         if (!IsPropertyBound(window, Window.TitleProperty))
-                            window.Title = s;
+                            window.Title = sText;
                         break;
                     case ContentControl content:
                         if (!IsPropertyBound(content, ContentControl.ContentProperty))
-                        { 
+                        {
                             if (content.Content is string)
-                                content.Content = s;
+                                content.Content = sText;
                         }
                         break;
                     default:
                         break;
                 }
             }
-
-            if (control is FrameworkElement framework)
+        }
+        private List<string> GetItemText(ItemsControl value)
+        {
+            List<string> texts = new List<string>();
+            foreach (object item in value.Items)
             {
-                string s1 = TranslateText(texts[1]);
-                if (!string.IsNullOrWhiteSpace(s1))
-                {
-                    if (!IsPropertyBound(framework, FrameworkElement.ToolTipProperty))
-                    {
-                        if (framework.ToolTip is string)
-                            framework.ToolTip = TranslateText(texts[1]);
-                    }
-                }
+                if (item is string s)
+                    texts.Add(s);
+                else
+                    texts.Add(null);
             }
-        }
-        #endregion
 
-        #region private function
-        private void Init()
-        {
-            LoadTranslateData();
+            return texts;
         }
-        private IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        private void SetItemText(ItemsControl value, string[] texts)
         {
-            if (parent == null) yield break;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            int count = Math.Min(value.Items.Count, texts.Length - 2);
+            for (int i = 0; i < count; i++)
             {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T t)
-                {
-                    yield return t;
-                }
+                string s = TranslateText(texts[i + 2]);
+                if (!string.IsNullOrWhiteSpace(s) && value.Items[i] is string)
+                    value.Items[i] = s;
             }
-        }
-        private bool IsPropertyBound(DependencyObject obj, DependencyProperty property)
-        {
-            return BindingOperations.IsDataBound(obj, property);
         }
         #endregion
 
@@ -239,25 +299,14 @@ namespace MultiLanguage
         }
         private void CollectTextFunc(FrameworkElement value)
         {
-            if (!CurrentExclude.IsValid(value))
-                return;
+            FillTranslateDict(GetControlText(value));
 
-            CollectTextControl(value);
-
-            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
+            foreach (FrameworkElement item in FindLogicalChildren<FrameworkElement>(value))
             {
-                CollectTextFunc(item);
+                FillTranslateDict(GetControlText(item));
             }
         }
-        private void CollectTextControl(FrameworkElement value)
-        {
-            if (!_oper.CollectText(value))
-            {
-                FillTranslateDict(GetControlText(value));
-            }
-        }
-
-        internal void FillTranslateDict(params string[] texts)
+        private void FillTranslateDict(params string[] texts)
         {
             foreach (string text in texts)
             {
@@ -274,29 +323,16 @@ namespace MultiLanguage
         {
             InitLanguageFunc(value);
         }
-
         internal void InitLanguageFunc(FrameworkElement value)
         {
-            if (!CurrentExclude.IsValid(value))
-                return;
-            if (!IsOperatingDynamicForm && IsDynamicForm(value))
-                return;
+            FillSourceDict(value.GetHashCode(), GetControlText(value));
 
-            InitLanguageControl(value);
-
-            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
+            foreach (FrameworkElement item in FindLogicalChildren<FrameworkElement>(value, !IsOperatingDynamicForm))
             {
-                InitLanguageFunc(item);
+                FillSourceDict(item.GetHashCode(), GetControlText(item));
             }
         }
-        private void InitLanguageControl(FrameworkElement value)
-        {
-            if (!_oper.InitLanguage(value))
-            {
-                FillSourceDict(value.GetHashCode(), GetControlText(value));
-            }
-        }
-        internal void FillSourceDict(int hash, params string[] texts)
+        private void FillSourceDict(int hash, params string[] texts)
         {
             if (Array.Exists(texts, text => !string.IsNullOrWhiteSpace(text)))
             {
@@ -315,18 +351,11 @@ namespace MultiLanguage
 
             _isChangingLanguage = false;
         }
-
         internal void ChangeLanguageFunc(FrameworkElement value)
         {
-            if (!CurrentExclude.IsValid(value))
-                return;
-            //主窗体碰到动态窗体时不再翻译，避免重复
-            if (!IsOperatingDynamicForm && IsDynamicForm(value))
-                return;
-
             ChangeLanguageControl(value);
 
-            foreach (FrameworkElement item in FindVisualChildren<FrameworkElement>(value))
+            foreach (FrameworkElement item in FindLogicalChildren<FrameworkElement>(value, !IsOperatingDynamicForm))
             {
                 ChangeLanguageFunc(item);
             }
@@ -335,13 +364,10 @@ namespace MultiLanguage
         }
         private void ChangeLanguageControl(FrameworkElement value)
         {
-            if (!_oper.ChangeLanguage(value))
-            {
-                if (GetSourceText(value.GetHashCode(), out string[] texts))
-                    SetControlText(value, texts);
-            }
+            if (GetSourceText(value.GetHashCode(), out string[] texts))
+                SetControlText(value, texts);
         }
-        internal bool GetSourceText(int hash, out string[] texts)
+        private bool GetSourceText(int hash, out string[] texts)
         {
             return CurrentSourceDict.TryGetValue(hash, out texts);
         }

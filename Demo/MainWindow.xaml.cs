@@ -39,6 +39,12 @@ namespace Demo
             //comboBox1.DisplayMemberPath = "Id";
             //ListBox
             //ComboBox
+            //Canvas
+            //TreeView
+            //TreeViewItem
+            //ComboBoxItem
+            //MenuItem
+            //TreeView
         }
 
         #region field
@@ -51,16 +57,15 @@ namespace Demo
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             comboBox.Items.Add("工具栏A");
-
             comboBox1.Items.Add(new Person("aaa", 111));
             comboBox1.Items.Add(new Person("bbb", 222));
             comboBox1.SelectedIndex = 0;
 
-            bool b = BindingOperations.IsDataBound(comboBox1, ComboBox.ItemsSourceProperty);
-
-            var aaa = comboBox1.ItemsSource;
-
-            var a0 = FindVisualChildren<FrameworkElement>(comboBox).ToList();
+            DependencyObject c = comboBox;
+            //bool b = BindingOperations.IsDataBound(c, ComboBox.ItemsSourceProperty);
+            //var aaa = c.ItemsSource;
+            //var a0 = FindLogicalChildren<FrameworkElement>(listBox1).ToList();
+            //var a1 = FindLogicalChildren(listBox1).ToList();
 
             InitLanguage();
         }
@@ -76,6 +81,35 @@ namespace Demo
                     yield return t;
                 }
                 foreach (var childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
+        private IEnumerable<T> FindLogicalChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) yield break;
+
+            foreach(var child in LogicalTreeHelper.GetChildren(parent))
+            {
+                if (child is T t)
+                {
+                    yield return t;
+                }
+                foreach (var descendant in FindLogicalChildren<T>(child as DependencyObject))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+        private IEnumerable<object> FindLogicalChildren(DependencyObject parent)
+        {
+            if (parent == null) yield break;
+
+            foreach (var child in LogicalTreeHelper.GetChildren(parent))
+            {
+                yield return child;
+                foreach (var childOfChild in FindLogicalChildren(child as DependencyObject))
                 {
                     yield return childOfChild;
                 }
@@ -116,7 +150,8 @@ namespace Demo
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-            var a0 = FindVisualChildren<DependencyObject>(comboBox1).ToList();
+            //var a0 = FindLogicalChildren<FrameworkElement>(listBox1).ToList();
+            //var a1 = FindLogicalChildren(listBox1).ToList();
         }
     }
 

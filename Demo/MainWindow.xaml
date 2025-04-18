@@ -36,7 +36,13 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="528,244,0,0" VerticalAlignment="Top" Click="button_Click_1"/>
+            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="477,237,0,0" VerticalAlignment="Top" Click="button_Click_1"/>
+            <TreeView x:Name="treeView" HorizontalAlignment="Left" Margin="15,145,0,0" VerticalAlignment="Top" Height="59" Width="190">
+                <TreeViewItem Header="节点0" IsExpanded="True">
+                    <TreeViewItem Header="节点1"/>
+                    <TreeViewItem Header="节点2"/>
+                </TreeViewItem>
+            </TreeView>
         </Grid>
     </DockPanel>
 </Window>
