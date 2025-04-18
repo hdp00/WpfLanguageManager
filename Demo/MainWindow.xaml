@@ -26,23 +26,28 @@
                 <ComboBoxItem Content="选项A"/>
                 <ComboBoxItem Content="选项B"/>
             </ComboBox>
-            <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="15,105,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.568,2.3">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding Id}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="477,237,0,0" VerticalAlignment="Top" Click="button_Click_1"/>
-            <TreeView x:Name="treeView" HorizontalAlignment="Left" Margin="15,145,0,0" VerticalAlignment="Top" Height="59" Width="190">
+
+            <TreeView x:Name="treeView" HorizontalAlignment="Left" Margin="15,106,0,0" VerticalAlignment="Top" Height="59" Width="120">
                 <TreeViewItem Header="节点0" IsExpanded="True">
                     <TreeViewItem Header="节点1"/>
                     <TreeViewItem Header="节点2"/>
                 </TreeViewItem>
             </TreeView>
+            <TabControl x:Name="tabControl" Margin="15,180,627,132">
+                <TabItem Header="页面A">
+                    <Grid Background="#FFE5E5E5"/>
+                </TabItem>
+                <TabItem Header="页面B">
+                    <Grid Background="#FFE5E5E5"/>
+                </TabItem>
+            </TabControl>
+            <GroupBox x:Name="groupBox" Header="GroupBox" Margin="567,68,10,152">
+                <Grid>
+                    <TextBox Text="文本" Margin="10,10,10,94" TextWrapping="Wrap"/>
+                    <Button x:Name="button_NewForm" Content="新建窗体" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.761,0.105" Click="button_NewForm_Click"/>
+                    <Label x:Name="lable_Additional" Content="Label" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </DockPanel>
 </Window>

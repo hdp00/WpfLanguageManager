@@ -154,6 +154,13 @@ namespace MultiLanguage
                     if (!IsPropertyBound(window, Window.TitleProperty))
                         texts[0] = window.Title;
                     break;
+                case HeaderedContentControl headeredContent:
+                    if (!IsPropertyBound(headeredContent, HeaderedContentControl.HeaderProperty))
+                    {
+                        if (headeredContent.Header is string s)
+                        texts[0] = s;
+                    }
+                    break;
                 case ContentControl content:
                     if (!IsPropertyBound(content, ContentControl.ContentProperty))
                     {
@@ -225,6 +232,13 @@ namespace MultiLanguage
                     case Window window:
                         if (!IsPropertyBound(window, Window.TitleProperty))
                             window.Title = sText;
+                        break;
+                    case HeaderedContentControl headeredContent:
+                        if (!IsPropertyBound(headeredContent, HeaderedContentControl.HeaderProperty))
+                        {
+                            if (headeredContent.Header is string s)
+                                headeredContent.Header = sText;
+                        }
                         break;
                     case ContentControl content:
                         if (!IsPropertyBound(content, ContentControl.ContentProperty))
@@ -400,6 +414,13 @@ namespace MultiLanguage
             _dynamicFormDict[value.GetHashCode()] = m;
             value.Closed += DynamicFormClosed;
 
+            return m;
+        }
+        public DynamicFormManager InitDynamicFormLanguage(Window value)
+        {
+            DynamicFormManager m = InitDynamicForm(value);
+            m.InitLanguage();
+            m.ChangeLanguage();
             return m;
         }
         public DynamicFormManager InitDialog(Window value)
