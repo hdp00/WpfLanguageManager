@@ -15,9 +15,9 @@ namespace MultiLanguage
 
         #region field
         //包含名称
-        private HashSet<string> _includeNameHash = new HashSet<string>();
+        private readonly HashSet<string> _includeNameHash = new HashSet<string>();
         //排除名称
-        private HashSet<string> _excludeNameHash = new HashSet<string>();
+        private readonly HashSet<string> _excludeNameHash = new HashSet<string>();
         #endregion
 
         #region public function
