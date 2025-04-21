@@ -23,10 +23,10 @@ namespace MultiLanguage
         #endregion
 
         #region field
-        private Window _window;
-        private LanguageManager _container;
+        private readonly Window _window;
+        private readonly LanguageManager _container;
         //<hash, texts> 初始的文本数据
-        private Dictionary<int, string[]> _sourceDict = new Dictionary<int, string[]>();
+        private readonly Dictionary<int, string[]> _sourceDict = new Dictionary<int, string[]>();
         #endregion
 
         #region public function

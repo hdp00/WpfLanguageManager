@@ -279,7 +279,7 @@ namespace MultiLanguage
         #endregion
 
         #region collect text. 收集需要翻译的信息
-        public void CollectText(FrameworkElement value, int level = 0)
+        public void CollectText(FrameworkElement value, int level)
         {
             CollectTextFunc(value, level);
         }
@@ -380,7 +380,7 @@ namespace MultiLanguage
         //动态窗体字典 [form_hash, DynamicFormManager]
         private readonly Dictionary<int, DynamicFormManager> _dynamicFormDict = new Dictionary<int, DynamicFormManager>();
 
-        public DynamicFormManager InitDynamicForm(Window value)
+        private DynamicFormManager InitDynamicForm(Window value)
         {
             DynamicFormManager m = new DynamicFormManager(this, value);
             _dynamicFormDict[value.GetHashCode()] = m;
@@ -388,11 +388,15 @@ namespace MultiLanguage
 
             return m;
         }
-        public DynamicFormManager InitDynamicFormLanguage(Window value)
+        public DynamicFormManager InitDynamicForm(Window value, bool refresh)
         {
             DynamicFormManager m = InitDynamicForm(value);
-            m.InitLanguage();
-            m.ChangeLanguage();
+            if (refresh)
+            {
+                m.InitLanguage();
+                m.ChangeLanguage();
+            }
+
             return m;
         }
         public DynamicFormManager InitDialog(Window value)

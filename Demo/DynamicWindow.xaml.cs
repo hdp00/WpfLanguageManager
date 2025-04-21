@@ -25,9 +25,15 @@ namespace Demo
             InitializeComponent();
         }
 
+        #region field
+        private LanguageManager _Language => LanguageManager.Instance;
+        #endregion
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LanguageManager.Instance.InitDynamicFormLanguage(this);
+            //_Language.CollectText(this, 1);
+            //_Language.SaveTranslateData(1);
+            _Language.InitDynamicForm(this, true);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Demo
         }
         private void button_NewForm_Click(object sender, RoutedEventArgs e)
         {
-            new DynamicWindow().ShowDialog();
+            new DynamicWindow().Show();
         }
         #endregion
 
@@ -36,8 +36,8 @@ namespace Demo
             InitExcludeControl();
             _language.InitLanguageSelectComboBox(this, cmb_Language);
 
-            //_language.CollectText(this);
-            //_language.SaveTranslateData();
+            //_language.CollectText(this, 0);
+            //_language.SaveTranslateData(0);
 
             _language.InitLanguage(this);
             _language.ChangeLanguage(this);
