@@ -1,0 +1,16 @@
+﻿{
+  "Types": [
+    {
+      "Value": "zh-CN",
+      "Text": "中文"
+    },
+    {
+      "Value": "en-US",
+      "Text": "English"
+    }
+  ],
+  "Files": {
+    "0": "Data/MainLanguage.json",
+    "1": "Data/ChildLanguage.json"
+  }
+}

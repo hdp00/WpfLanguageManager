@@ -15,7 +15,7 @@ namespace Demo
         }
 
         #region field
-        private LanguageManager _language = LanguageManager.Instance;
+        private readonly LanguageManager _language = LanguageManager.Instance;
         #endregion
 
         #region event
@@ -32,6 +32,7 @@ namespace Demo
         #region init
         private void InitLanguage()
         {
+            _language.Init("Data/Config.json");
             InitExcludeControl();
             _language.InitLanguageSelectComboBox(this, cmb_Language);
 

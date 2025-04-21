@@ -80,7 +80,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\Translate.json" />
+    <None Include="Data\ChildLanguage.json" />
+    <None Include="Data\Config.json" />
+    <None Include="Data\MainLanguage.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

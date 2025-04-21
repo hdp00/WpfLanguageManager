@@ -16,13 +16,8 @@ namespace MultiLanguage
 {
     public partial class LanguageManager
     {
-        public LanguageManager()
-        {
-            Init();
-        }
-
         #region property
-        private static LanguageManager _instance = new LanguageManager();
+        private static readonly LanguageManager _instance = new LanguageManager();
         //实例
         public static LanguageManager Instance => _instance;
 
@@ -32,15 +27,15 @@ namespace MultiLanguage
         //当前语言
         public string CurrentLanguage
         {
-            get => _translateData.Types[_currentLanguageIndex].Value;
+            get => TranslateConfig.Types[_currentLanguageIndex].Value;
             set
             {
-                int index = Array.FindIndex(_translateData.Types, x => x.Value == value);
+                int index = Array.FindIndex(TranslateConfig.Types, x => x.Value == value);
                 if (index >= 0)
                     _currentLanguageIndex = index;
             }
         }
-        public TranslateTypeData[] TranslateTypes => _translateData.Types;
+        internal TranslateTypeInfo[] TranslateTypes => TranslateConfig.Types;
         #endregion
 
         //标记是否正在切换语言
@@ -52,19 +47,30 @@ namespace MultiLanguage
 
         #region field
         //翻译数据
-        private TranslateData _translateData;
+        private readonly TranslateData _translateData = new TranslateData();
+        //翻译配置
+        private TranslateConfigInfo TranslateConfig => _translateData.Config;
         //翻译字典
-        private Dictionary<string, string[]> TranslateDict => _translateData.Data;
+        private Dictionary<string, TranslateDataInfo> TranslateDict => _translateData.Data;
         //<hash, texts> 初始的文本数据
-        private Dictionary<int, string[]> _sourceDict = new Dictionary<int, string[]>();
+        private readonly Dictionary<int, string[]> _sourceDict = new Dictionary<int, string[]>();
         #endregion
 
         #region public function
+        //初始化
+        public void Init(string configFileName)
+        {
+            _translateData.ConfigFileName = configFileName;
+            _translateData.Load();
+        }
+        //保存翻译数据 -1:保存所有；其他值:保存指定文件
+        public void SaveTranslateData(int level) => _translateData.Save(level);
         //翻译文本
         public string TranslateText(string text)
         {
-            if (!string.IsNullOrEmpty(text) && TranslateDict.TryGetValue(text, out string[] texts))
+            if (!string.IsNullOrEmpty(text) && TranslateDict.TryGetValue(text, out TranslateDataInfo data))
             {
+                string[] texts = data.Texts;
                 if (texts?.Length > _currentLanguageIndex && !string.IsNullOrWhiteSpace(texts[_currentLanguageIndex]))
                     return texts[_currentLanguageIndex];
             }
@@ -79,10 +85,7 @@ namespace MultiLanguage
         #endregion
 
         #region private function
-        private void Init()
-        {
-            LoadTranslateData();
-        }
+
         private IEnumerable<T> FindLogicalChildren<T>(DependencyObject parent, bool IsOperatingMainForm = false) where T : DependencyObject
         {
             if (parent == null) yield break;
@@ -112,8 +115,7 @@ namespace MultiLanguage
         {
             //所有控件都有text，tooltip
             //list & tree, 还需要添加列表项中的文本
-            FrameworkElement framework = control as FrameworkElement;
-            if (framework == null)
+            if (!(control is FrameworkElement framework))
                 return null;
 
             //text, tooltip
@@ -178,8 +180,7 @@ namespace MultiLanguage
         {
             //所有控件都有text，tooltip
             //list & tree, 还需要添加列表项中的文本
-            FrameworkElement framework = control as FrameworkElement;
-            if (framework == null)
+            if (!(control is FrameworkElement framework))
                 return;
 
             string sTooltip = TranslateText(texts[1]);
@@ -236,7 +237,7 @@ namespace MultiLanguage
                     case HeaderedContentControl headeredContent:
                         if (!IsPropertyBound(headeredContent, HeaderedContentControl.HeaderProperty))
                         {
-                            if (headeredContent.Header is string s)
+                            if (headeredContent.Header is string)
                                 headeredContent.Header = sText;
                         }
                         break;
@@ -277,57 +278,28 @@ namespace MultiLanguage
         }
         #endregion
 
-        #region translate data. 翻译数据的读取/保存
-        private string TranslateFileName => Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Translate.json");
-        private void LoadTranslateData()
-        {
-            try
-            {
-                string text = File.ReadAllText(TranslateFileName);
-                _translateData = JsonConvert.DeserializeObject<TranslateData>(text);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-        }
-        public void SaveTranslateData()
-        {
-            try
-            {
-                _translateData.Sort();
-                string text = JsonConvert.SerializeObject(_translateData, Formatting.Indented);
-                File.WriteAllText(TranslateFileName, text);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-        }
-        #endregion
-
         #region collect text. 收集需要翻译的信息
-        public void CollectText(FrameworkElement value)
+        public void CollectText(FrameworkElement value, int level = 0)
         {
-            CollectTextFunc(value);
+            CollectTextFunc(value, level);
         }
-        private void CollectTextFunc(FrameworkElement value)
+        private void CollectTextFunc(FrameworkElement value, int level)
         {
-            FillTranslateDict(GetControlText(value));
+            FillTranslateDict(level, GetControlText(value));
 
             foreach (FrameworkElement item in FindLogicalChildren<FrameworkElement>(value))
             {
-                FillTranslateDict(GetControlText(item));
+                FillTranslateDict(level, GetControlText(item));
             }
         }
-        private void FillTranslateDict(params string[] texts)
+        private void FillTranslateDict(int level, params string[] texts)
         {
             foreach (string text in texts)
             {
                 if (string.IsNullOrWhiteSpace(text) || TranslateDict.ContainsKey(text))
                     continue;
 
-                TranslateDict[text] = null;
+                TranslateDict[text] = new TranslateDataInfo(level, null);
             }
         }
         #endregion
@@ -392,21 +364,21 @@ namespace MultiLanguage
         //用于切换主窗体和动态窗体的SourceDict
         internal Dictionary<int, string[]> CurrentSourceDict
         {
-            get => _currentSourceDict == null ? _sourceDict : _currentSourceDict;
+            get => _currentSourceDict ?? _sourceDict;
             set => _currentSourceDict = value;
         }
         //用于切换主窗体和动态窗体的Exclude
         private ExcludeManager _currentExclude;
         internal ExcludeManager CurrentExclude
         {
-            get => _currentExclude == null ? Exclude : _currentExclude;
+            get => _currentExclude ?? Exclude;
             set => _currentExclude = value;
         }
         //是否正在执行动态窗体
         private bool IsOperatingDynamicForm => _currentExclude != null;
 
         //动态窗体字典 [form_hash, DynamicFormManager]
-        private Dictionary<int, DynamicFormManager> _dynamicFormDict = new Dictionary<int, DynamicFormManager>();
+        private readonly Dictionary<int, DynamicFormManager> _dynamicFormDict = new Dictionary<int, DynamicFormManager>();
 
         public DynamicFormManager InitDynamicForm(Window value)
         {
