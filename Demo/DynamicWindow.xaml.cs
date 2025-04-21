@@ -26,14 +26,14 @@ namespace Demo
         }
 
         #region field
-        private LanguageManager Lang => LanguageManager.Instance;
+        private LanguageManager _language => LanguageManager.Instance;
         #endregion
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //Lang.CollectText(this, 1);
-            //Lang.SaveTranslateData(1);
-            Lang.InitDynamicForm(this, true);
+            //_language.CollectText(this, 1);
+            //_language.SaveTranslateData(1);
+            _language.InitDynamicForm(this, true);
         }
     }
 }
