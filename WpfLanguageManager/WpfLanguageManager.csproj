@@ -57,7 +57,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\TranslateData.cs" />
+    <Compile Include="LanguageData\TranslateData.cs" />
     <Compile Include="DynamicFormManager.cs" />
     <Compile Include="ExcludeManager.cs" />
     <Compile Include="Interface\ILanguageForm.cs" />
@@ -80,9 +80,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\ChildLanguage.json" />
-    <None Include="Data\Config.json" />
-    <None Include="Data\MainLanguage.json" />
+    <None Include="LanguageData\Child.json" />
+    <None Include="LanguageData\Config.json" />
+    <None Include="LanguageData\Main.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

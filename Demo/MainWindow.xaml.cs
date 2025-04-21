@@ -32,7 +32,7 @@ namespace Demo
         #region init
         private void InitLanguage()
         {
-            _language.Init("Data/Config.json");
+            _language.Init("LanguageData/Config.json");
             InitExcludeControl();
             _language.InitLanguageSelectComboBox(this, cmb_Language);
 

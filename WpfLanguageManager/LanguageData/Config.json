@@ -10,7 +10,7 @@
     }
   ],
   "Files": {
-    "0": "Data/MainLanguage.json",
-    "1": "Data/ChildLanguage.json"
+    "0": "LanguageData/Main.json",
+    "1": "LanguageData/Child.json"
   }
 }
