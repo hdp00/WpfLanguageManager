@@ -134,7 +134,12 @@ namespace MultiLanguage
                     if (selector.ItemsSource == null)
                         texts.AddRange(GetItemText(selector));
                     break;
-                //tree 
+                //tree
+                case TreeView treeView:
+                    if (treeView.ItemsSource == null)
+                        texts.AddRange(GetItemText(treeView));
+                    break;
+                //tree item
                 case HeaderedItemsControl header:
                     if (header.ItemsSource == null && !IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
                     {
@@ -201,7 +206,12 @@ namespace MultiLanguage
                     if (selector.ItemsSource == null)
                         SetItemText(selector, texts);
                     break;
-                //tree 
+                //tree view
+                case TreeView treeView:
+                    if (treeView.ItemsSource == null)
+                        SetItemText(treeView, texts);
+                    break;
+                //tree item
                 case HeaderedItemsControl header:
                     if (header.ItemsSource == null && !IsPropertyBound(header, HeaderedItemsControl.HeaderProperty))
                         SetItemText(header, texts);
@@ -307,6 +317,7 @@ namespace MultiLanguage
         #region  init language 获取所有控件的初始文本
         public void InitLanguage(FrameworkElement value)
         {
+            CurrentSourceDict.Clear();
             InitLanguageFunc(value);
         }
         internal void InitLanguageFunc(FrameworkElement value)
@@ -324,6 +335,11 @@ namespace MultiLanguage
             {
                 CurrentSourceDict[hash] = texts;
             }
+            else
+            {
+                if (CurrentSourceDict.ContainsKey(hash))
+                    CurrentSourceDict.Remove(hash);
+            }
         }
         #endregion
 
@@ -337,6 +353,16 @@ namespace MultiLanguage
 
             _isChangingLanguage = false;
         }
+        //控件动态修改过后，可以调用此函数重新翻译
+        public void ChangeDynamicControlLanguage(FrameworkElement value)
+        {
+            InitLanguageFunc(value);
+
+            _isChangingLanguage = true;
+            ChangeLanguageFunc(value);
+            _isChangingLanguage = false;
+        }
+
         internal void ChangeLanguageFunc(FrameworkElement value)
         {
             ChangeLanguageControl(value);

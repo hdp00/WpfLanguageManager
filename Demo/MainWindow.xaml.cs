@@ -1,5 +1,6 @@
 ﻿using MultiLanguage;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Demo
 {
@@ -27,6 +28,13 @@ namespace Demo
         {
             //新建窗体的翻译
             new DynamicWindow().Show();
+        }
+        private void button_ChangeControl_Click(object sender, RoutedEventArgs e)
+        {
+            treeView.Items.Clear();
+            treeView.Items.Add("节点2");
+            treeView.Items.Add("节点1");
+            _language.ChangeDynamicControlLanguage(treeView);
         }
         #endregion
 
@@ -62,5 +70,7 @@ namespace Demo
             lable_Additional.Content = _language.TranslateText("页面A");
         }
         #endregion
+
+
     }
 }

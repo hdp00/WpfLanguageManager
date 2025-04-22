@@ -41,11 +41,12 @@
                     <Grid Background="#FFE5E5E5"/>
                 </TabItem>
             </TabControl>
-            <GroupBox x:Name="groupBox" Header="GroupBox" Margin="567,68,10,152">
-                <Grid>
-                    <TextBox Text="文本" Margin="10,10,10,94" TextWrapping="Wrap"/>
+            <GroupBox x:Name="groupBox" Header="GroupBox" Margin="567,34,10,134" Height="240">
+                <Grid Height="240">
+                    <TextBox Text="文本" TextWrapping="Wrap" Margin="0,10,0,167"/>
                     <Button x:Name="button_NewForm" Content="新建窗体" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.761,0.105" Click="button_NewForm_Click"/>
                     <Label x:Name="lable_Additional" Content="Label" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="button_ChangeControl" Content="修改控件后重新翻译" HorizontalAlignment="Left" Margin="10,141,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.761,0.105" Click="button_ChangeControl_Click"/>
                 </Grid>
             </GroupBox>
         </Grid>
