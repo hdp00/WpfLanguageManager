@@ -23,21 +23,23 @@ namespace LanguageEditor
         }
 
         #region property
-        public List<string> ColumnNames { get; set; } = new List<string>();
-        public HashSet<int> Levels { get; set; } = new HashSet<int>();
-        public ObservableCollection<RowInfo> Rows { get; set; } = new ObservableCollection<RowInfo>();
+        public List<string> ColumnNames { get; set; } = [];
+        public HashSet<int> Levels { get; set; } = [];
+        public ObservableCollection<RowInfo> Rows { get; set; } = [];
         #endregion
 
         #region field
+        //配置文件名
         private readonly string _ConfigFileName;
+        private readonly HashSet<string> _SourceHash = [];
         #endregion
 
         #region load & save
-        public void Load()
+        private void Load()
         {
             try
             {
-                TranslateData data = new TranslateData() { ConfigFileName = _ConfigFileName };
+                TranslateData data = new() { ConfigFileName = _ConfigFileName };
                 data.Load();
                 Data2View(data);
             }
@@ -60,30 +62,35 @@ namespace LanguageEditor
 
         private void Data2View(TranslateData data)
         {
-            ColumnNames.Clear();
-            Levels.Clear();
             Rows.Clear();
+            _SourceHash.Clear();
 
-            data.Config.Types.ForEach(type => ColumnNames.Add(type.Text));
-            data.Config.Files.Keys.ForEach(level => Levels.Add(level));
-            data.Data.Keys.ForEach(source => 
+            ColumnNames = [.. data.Config.Types.Select(type => type.Text)];
+            Levels = [.. data.Config.Files.Keys.Select(level => level)];
+            data.Data.Keys.ForEach(source =>
             {
+                TranslateDataInfo d = data.Data[source];
                 Rows.Add(new RowInfo()
                 {
-                    Source = source,
-                    Level = data.Data[source].Level,
-                    Translations = data.Data[source].Texts
+                    Source = new TextInfo(source),
+                    Level = d.Level,
+                    Translations = [.. d.Texts.Select(t => new TextInfo(t))]
                 });
+                _SourceHash.Add(source);
             });
         }
         private TranslateData View2Data()
         {
-            TranslateData data = new TranslateData() { ConfigFileName = _ConfigFileName };
+            TranslateData data = new() { ConfigFileName = _ConfigFileName };
             Dictionary<string, TranslateDataInfo> dict = data.Data;
 
             foreach (RowInfo row in Rows)
             {
-                dict[row.Source] = new TranslateDataInfo(row.Level, row.Translations);
+                if (!string.IsNullOrEmpty(row.Source?.Text))
+                {
+                    string?[]? texts = row.Translations?.Select(t => t.Text).ToArray();
+                    dict[row.Source.Text] = new TranslateDataInfo(row.Level, texts);
+                }
             }
 
             return data;
@@ -92,11 +99,19 @@ namespace LanguageEditor
     }
 
     //行数据
-    public class  RowInfo
+    public class RowInfo
     {
-        public string Source { get; set; } = "";
+        public TextInfo? Source { get; set; }
         public int Level { get; set; }
-        public string[]? Translations { get; set; }
+        public TextInfo[]? Translations { get; set; }
+    }
+    //文本数据
+    public class TextInfo
+    {
+        public TextInfo(string text) => Text = text;
+
+        public string? Text { get; set; }
+        public bool IsModified { get; set; }
     }
 }
 
