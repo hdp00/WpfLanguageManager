@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace MultiLanguage
 {
-    internal class TranslateData
+    public class TranslateData
     {
         #region property
         //配置文件名
@@ -103,7 +103,7 @@ namespace MultiLanguage
 
     #region define
     //语言类型
-    internal class TranslateTypeInfo
+    public class TranslateTypeInfo
     {
         public string Value { get; set; }
         public string Text { get; set; }
@@ -111,7 +111,7 @@ namespace MultiLanguage
         public override string ToString() => Value;
     }
     //翻译配置
-    internal class TranslateConfigInfo
+    public class TranslateConfigInfo
     {
         //语言类型
         public TranslateTypeInfo[] Types { get; set; }
@@ -119,7 +119,7 @@ namespace MultiLanguage
         public Dictionary<int, string> Files { get; set; }
     }
     //翻译数据
-    internal class TranslateDataInfo
+    public class TranslateDataInfo
     {
         public TranslateDataInfo(int level, string[] texts)
         { 

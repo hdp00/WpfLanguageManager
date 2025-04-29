@@ -4,12 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LanguageEditor"
-        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" x:Class="LanguageEditor.MainWindow"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" x:Class="LanguageEditor.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 
-        <dxb:ToolBarControl/>
+        <dxg:GridControl AutoGenerateColumns="AddNew" EnableSmartColumnsGeneration="True">
+            <dxg:GridControl.View>
+                <dxg:TableView AllowHeaderNavigation="True" TotalSummaryPosition="Bottom"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
 
     </Grid>
 </Window>
