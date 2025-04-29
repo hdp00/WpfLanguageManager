@@ -164,8 +164,12 @@ namespace WpfApp1
                 MessageBox.Show($"{(row as Person).Name}");
             }
         }
+
         #endregion
 
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
     }
 }
