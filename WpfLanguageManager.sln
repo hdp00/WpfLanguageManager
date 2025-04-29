@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{F344214F-2BD9-4856-BDDC-CA0B00DDE53B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageEditor", "LanguageEditor\LanguageEditor.csproj", "{A4799AD8-5320-403F-BC4A-B1B66E8E8F64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageEditor", "LanguageEditor\LanguageEditor.csproj", "{CA4F4F26-632E-48AA-BDC0-C34504DBFE31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +34,10 @@ Global
 		{F344214F-2BD9-4856-BDDC-CA0B00DDE53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F344214F-2BD9-4856-BDDC-CA0B00DDE53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F344214F-2BD9-4856-BDDC-CA0B00DDE53B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4799AD8-5320-403F-BC4A-B1B66E8E8F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4799AD8-5320-403F-BC4A-B1B66E8E8F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4799AD8-5320-403F-BC4A-B1B66E8E8F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4799AD8-5320-403F-BC4A-B1B66E8E8F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA4F4F26-632E-48AA-BDC0-C34504DBFE31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA4F4F26-632E-48AA-BDC0-C34504DBFE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA4F4F26-632E-48AA-BDC0-C34504DBFE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA4F4F26-632E-48AA-BDC0-C34504DBFE31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
