@@ -20,4 +20,10 @@
     <ProjectReference Include="..\WpfLanguageManager\WpfLanguageManager.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Image\delete.png" />
+    <Resource Include="Image\new.png" />
+    <Resource Include="Image\save.png" />
+  </ItemGroup>
+
 </Project>

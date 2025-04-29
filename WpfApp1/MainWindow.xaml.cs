@@ -1,26 +1,12 @@
 ﻿using DevExpress.Mvvm;
-using DevExpress.Utils.Commands;
-using DevExpress.Xpf.Core.Commands;
-using DevExpress.Xpf.Editors.Helpers;
-using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.Grid.GroupRowLayout;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace WpfApp1
 {
@@ -166,10 +152,5 @@ namespace WpfApp1
         }
 
         #endregion
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
