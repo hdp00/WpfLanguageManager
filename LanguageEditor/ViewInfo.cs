@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.Mvvm.Native;
 using MultiLanguage;
+using PropertyChanged;
 
 namespace LanguageEditor
 {
@@ -27,12 +28,25 @@ namespace LanguageEditor
         public List<string> ColumnNames { get; set; } = [];
         public HashSet<int> Levels { get; set; } = [];
         public ObservableCollection<RowInfo> Rows { get; set; } = [];
+        //源文本字典，用于修改时校验
+        public readonly HashSet<string> SourceHash = [];
         #endregion
 
         #region field
         //配置文件名
         private readonly string _ConfigFileName;
-        private readonly HashSet<string> _SourceHash = [];
+        #endregion
+
+        #region public function
+        public RowInfo CreateRow()
+        {
+            RowInfo row = new RowInfo();
+            row.Source = new TextInfo(string.Empty);
+            row.Translations = new TextInfo[ColumnNames.Count];
+            for (int i = 0; i < row.Translations.Length; i++)
+                row.Translations[i] = new TextInfo(string.Empty);
+            return row;
+        }
         #endregion
 
         #region private function 
@@ -77,7 +91,7 @@ namespace LanguageEditor
         private void Data2View(TranslateData data)
         {
             Rows.Clear();
-            _SourceHash.Clear();
+            SourceHash.Clear();
 
             ColumnNames = [.. data.Config.Types.Select(type => type.Text)];
             Levels = [.. data.Config.Files.Keys.Select(level => level)];
@@ -101,7 +115,7 @@ namespace LanguageEditor
                     row.Translations = [.. d.Texts.Select(t => new TextInfo(t))];
                 Rows.Add(row);
 
-                _SourceHash.Add(source);
+                SourceHash.Add(source);
             });
         }
         private TranslateData View2Data()
@@ -128,6 +142,7 @@ namespace LanguageEditor
     }
 
     //行数据
+    [AddINotifyPropertyChangedInterface]
     public class RowInfo
     {
         public TextInfo Source { get; set; }
@@ -144,6 +159,7 @@ namespace LanguageEditor
 
     }
     //文本数据
+    [AddINotifyPropertyChangedInterface]
     public class TextInfo
     {
         public TextInfo(string text) => Text = text;

@@ -71,7 +71,15 @@ namespace LanguageEditor
 
             NewItemCommand = new DelegateCommand(() =>
             {
-                Title = "newItem";
+                RowInfo row = View.CreateRow();
+                ItemWindow w = new();
+                w.Init(View, row.Source.Text, row.Level);
+                bool? result = w.ShowDialog();
+                if (result == true)
+                {
+                    ChangeSource(row, w.Source, w.Level);
+                }
+                View.Rows.Add(row);
             });
 
             DeleteItemCommand = new DelegateCommand(() =>
@@ -146,16 +154,31 @@ namespace LanguageEditor
         {
             if (sender is TableView table)
             {
-                //var view = sender as TableView;
-                //var hitInfo = view?.CalcHitInfo(e.OriginalSource as DependencyObject);
+                var hitInfo = table.CalcHitInfo(e.OriginalSource as DependencyObject);
 
-                //if (hitInfo != null && hitInfo.RowHandle >= 0 && hitInfo.Column != null)
-                //{
-                //    // 获取单元格的值
-                //    var row = grid.GetRow(hitInfo.RowHandle);
-                //    System.Windows.Forms.MessageBox.Show($"{(row as Person).Name}");
-                //}            
+                if (hitInfo != null && hitInfo.RowHandle >= 0 && hitInfo.Column == grid.Columns[0])
+                {
+                    RowInfo row = grid.GetRow(hitInfo.RowHandle) as RowInfo;
+                    ItemWindow w = new();
+                    w.Init(View, row.Source.Text, row.Level);
+                    bool? result = w.ShowDialog();
+                    if (result == true)
+                    {
+                        ChangeSource(row, w.Source, w.Level);
+                        grid.RefreshRow(hitInfo.RowHandle);
+                    }
+                }
             }
+        }
+        #endregion
+
+        #region data
+        private void ChangeSource(RowInfo row, string source, int level)
+        {
+            row.Source.Text = source;
+            row.Source.IsModified = true;
+            row.Level = level;
+            IsModified = true;
         }
         #endregion
     }

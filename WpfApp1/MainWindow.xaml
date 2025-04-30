@@ -8,6 +8,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <DockPanel LastChildFill="True">
+        <ComboBox x:Name="comboBox" Width="318">
+        </ComboBox>
 
 
     </DockPanel>

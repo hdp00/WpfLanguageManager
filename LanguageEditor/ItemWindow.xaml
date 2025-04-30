@@ -1,0 +1,31 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LanguageEditor"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" x:Class="LanguageEditor.ItemWindow"
+        mc:Ignorable="d"
+        Title="Source" Height="318" Width="467">
+    <Grid>
+        <dxlc:LayoutControl Orientation="Vertical">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutItem Label="源">
+                    <TextBox x:Name="txt_Source" Height="200" TextWrapping="Wrap" AcceptsReturn="True" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="文件">
+                    <ComboBox x:Name="combo_Level" />
+                </dxlc:LayoutItem>
+
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup Orientation="Horizontal">
+                <dxlc:LayoutItem Margin="30, 10, 30, 10">
+                    <Button Content="确定" Click="ButtonOK_Click" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <Button Content="取消" Margin="30, 10, 30, 10" Click="ButtonCancel_Click"/>
+                </dxlc:LayoutItem>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </Grid>
+</Window>
