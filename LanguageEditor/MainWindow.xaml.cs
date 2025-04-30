@@ -1,9 +1,13 @@
 ﻿using DevExpress.Data.Browsing;
+using DevExpress.Export.Xl;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.Grid.GroupRowLayout;
 using LanguageEditor;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,10 +31,7 @@ namespace LanguageEditor
 
         #region property
         private bool IsModified { get; set; }
-        #endregion
-
-        #region field
-        private ViewInfo _View;
+        public ViewInfo View { get; set; }
         #endregion
 
         #region event
@@ -46,8 +47,8 @@ namespace LanguageEditor
         }
         private void InitData()
         {
-            _View = new ViewInfo("LanguageData/Config.json");
-            DataContext = _View;
+            DataContext = this;
+            View = new ViewInfo("LanguageData/Config.json");
         }
         #endregion
 
@@ -60,7 +61,7 @@ namespace LanguageEditor
         {
             SaveCommand = new DelegateCommand(() =>
             {
-                _View.Save();
+                View.Save();
                 IsModified = false;
             },
             () =>
@@ -84,14 +85,16 @@ namespace LanguageEditor
         private void InitGrid()
         {
             InitColumn();
+            InitFormat();
         }
         private void InitColumn()
         {
             grid.Columns.Add(new GridColumn() { Header = "源", FieldName = "Source.Text" });
-            InitFormat(grid.Columns[0], "Source.IsModified == true");
-            for (int i = 0; i < _View?.ColumnNames.Count; i++)
+            grid.Columns[0].AllowEditing = DevExpress.Utils.DefaultBoolean.False;
+
+            for (int i = 0; i < View?.ColumnNames.Count; i++)
             {
-                string name = _View.ColumnNames[i];
+                string name = View.ColumnNames[i];
                 grid.Columns.Add(
                     new GridColumn()
                     {
@@ -99,26 +102,31 @@ namespace LanguageEditor
                         Binding = new System.Windows.Data.Binding($"Translations[{i}].Text") { Mode = BindingMode.TwoWay }
                     }
                 );
-                InitFormat(grid.Columns[i + 1], $"Translations[{i}].IsModified == true");
             }
 
-            grid.Columns[0].AllowEditing = DevExpress.Utils.DefaultBoolean.False;
+            grid.Columns.Add(new GridColumn() { Header = "文件", FieldName = "Level", GroupIndex = 0 });
         }
-        private void InitFormat(GridColumn column, string expression)
+        private void InitFormat()
         {
-            FormatCondition format = new FormatCondition()
+            //最后一列Level，不需要格式化
+            int count = grid.Columns.Count - 1;
+            for (int i = 0; i < count; i++)
             {
-                FieldName = column.FieldName,
-                Expression = expression,
-                ApplyToRow = false,
-            };
+                GridColumn c = grid.Columns[i];
 
-            format.Format = new Format()
-            {
-                Background = System.Windows.Media.Brushes.Yellow
-            };
+                FormatCondition condiation = new()
+                {
+                    FieldName = c.FieldName,
+                    Expression = $"IsModified{i}",
+                    ApplyToRow = false,
+                    Format = new Format()
+                    {
+                        Background = System.Windows.Media.Brushes.Yellow
+                    }
+                };
 
-            tableView.FormatConditions.Add(format);
+                tableView.FormatConditions.Add(condiation);
+            }
         }
 
         private void tableView_CellValueChanged(object sender, CellValueChangedEventArgs e)
@@ -131,6 +139,7 @@ namespace LanguageEditor
                     r.Source.IsModified = true;
                 else
                     r.Translations[index - 1].IsModified = true;
+                IsModified = true;
             }
         }
         private void tableView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

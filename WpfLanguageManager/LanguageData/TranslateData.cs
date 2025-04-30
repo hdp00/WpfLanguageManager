@@ -51,20 +51,39 @@ namespace MultiLanguage
         #region load & save
         public void Load()
         {
+            LoadConfig();
+            LoadText();
+        }
+        public void LoadConfig()
+        {
             string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string configName = Path.Combine(path, ConfigFileName); 
-            
+            string configName = Path.Combine(path, ConfigFileName);
+
             try
             {
                 string text = File.ReadAllText(configName);
                 Config = JsonConvert.DeserializeObject<TranslateConfigInfo>(text);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+        public void LoadText()
+        {
+            if (Config == null)
+                return;
 
+            string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+            try
+            {
                 foreach (int level in Config.Files.Keys)
-                { 
+                {
                     string fileName = Path.Combine(path, Config.Files[level]);
                     string fileText = File.ReadAllText(fileName);
                     Dictionary<string, string[]> translate = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(fileText);
-                    foreach(string source in translate.Keys)
+                    foreach (string source in translate.Keys)
                     {
                         Data[source] = new TranslateDataInfo(level, translate[source]);
                     }
@@ -75,6 +94,7 @@ namespace MultiLanguage
                 MessageBox.Show(e.Message);
             }
         }
+
         //-1 保存全部；其他值 保存指定层级
         public void Save(int level = -1)
         {

@@ -15,7 +15,7 @@ using MultiLanguage;
 
 namespace LanguageEditor
 {
-    internal class ViewInfo
+    public class ViewInfo
     {
         public ViewInfo(string configFileName)
         {
@@ -33,6 +33,18 @@ namespace LanguageEditor
         //配置文件名
         private readonly string _ConfigFileName;
         private readonly HashSet<string> _SourceHash = [];
+        #endregion
+
+        #region private function 
+        private void SetModified(bool isModified)
+        { 
+            Rows.ForEach(row =>
+            {
+                row.Source.IsModified = isModified;
+                for (int i = 0; i < row.Translations.Length; i++)
+                    row.Translations[i].IsModified = isModified;
+            });
+        }
         #endregion
 
         #region load & save
@@ -54,6 +66,7 @@ namespace LanguageEditor
             try
             {
                 View2Data().Save();
+                SetModified(false);
             }
             catch (Exception e)
             {
@@ -76,7 +89,6 @@ namespace LanguageEditor
                 {
                     Source = new TextInfo(source),
                     Level = d.Level,
-                    
                 };
                 //避免null
                 if (d.Texts == null)
@@ -95,13 +107,17 @@ namespace LanguageEditor
         private TranslateData View2Data()
         {
             TranslateData data = new() { ConfigFileName = _ConfigFileName };
+            data.LoadConfig();
+            if (data.Config == null)
+                return data;
+
             Dictionary<string, TranslateDataInfo> dict = data.Data;
 
             foreach (RowInfo row in Rows)
             {
-                if (!string.IsNullOrEmpty(row.Source?.Text))
+                if (!string.IsNullOrEmpty(row.Source.Text))
                 {
-                    string?[]? texts = row.Translations?.Select(t => t.Text).ToArray();
+                    string[] texts = row.Translations?.Select(t => t.Text).ToArray();
                     dict[row.Source.Text] = new TranslateDataInfo(row.Level, texts);
                 }
             }
@@ -117,6 +133,15 @@ namespace LanguageEditor
         public TextInfo Source { get; set; }
         public int Level { get; set; }
         public TextInfo[] Translations { get; set; }
+
+        #region 表格的条件比较不支持数组，只能额外写属性来处理
+        public bool IsModified0 => Source.IsModified;
+        public bool IsModified1 => (Translations != null && Translations.Length > 0) && Translations[0].IsModified;
+        public bool IsModified2 => (Translations != null && Translations.Length > 1) && Translations[1].IsModified;
+        public bool IsModified3 => (Translations != null && Translations.Length > 2) && Translations[2].IsModified;
+        public bool IsModified4 => (Translations != null && Translations.Length > 3) && Translations[3].IsModified;
+        #endregion
+
     }
     //文本数据
     public class TextInfo

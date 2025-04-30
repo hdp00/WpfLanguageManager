@@ -8,31 +8,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <DockPanel LastChildFill="True">
-        <dxb:ToolBarControl HorizontalAlignment="Left" DockPanel.Dock="Top">
-            <dxb:BarButtonItem Content="保存" Glyph="/Image/save.png" Command="{Binding SaveCommand}"/>
-            <dxb:BarItemSeparator Content="BarItemSeparator"/>
-            <dxb:BarButtonItem Content="新增项..." Glyph="/Image/new.png" Command="{Binding NewItemCommand}"/>
-        </dxb:ToolBarControl>
-        
-        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding Persons}"
-                         AutoExpandAllGroups="True"
-                         >
-            <dxg:GridControl.GroupSummary>
-                <dxg:GridSummaryItem SummaryType="Count" />
-            </dxg:GridControl.GroupSummary>
-            <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="Name" Header="姓名" Width="100" Fixed="Left" AllowEditing="False" />
-                <dxg:GridColumn FieldName="Age" Header="年龄" Width="100" GroupIndex="0" />
-            </dxg:GridControl.Columns>
 
-            <dxg:GridControl.View>
-                <dxg:TableView x:Name="tableView" AllowHeaderNavigation="True" TotalSummaryPosition="Bottom" ShowEditFormOnDoubleClick="True"
-                               CellValueChanged="tableView_CellValueChanged"
-                               MouseDoubleClick="tableView_MouseDoubleClick"
-                               >
-                </dxg:TableView>
-            </dxg:GridControl.View>
-        </dxg:GridControl>
 
     </DockPanel>
 </dx:ThemedWindow>

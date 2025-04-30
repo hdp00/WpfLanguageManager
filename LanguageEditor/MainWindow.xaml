@@ -15,15 +15,12 @@
             <dxb:BarButtonItem Content="删除项" Glyph="/Image/delete.png" Command="{Binding DeleteItemCommand}"/>
         </dxb:ToolBarControl>
 
-        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding Rows}"
+        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding View.Rows}"
                          AutoExpandAllGroups="True"
                          >
             <dxg:GridControl.GroupSummary>
                 <dxg:GridSummaryItem SummaryType="Count" />
             </dxg:GridControl.GroupSummary>
-            <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="Level" Header="层级" Width="100" GroupIndex="0" />
-            </dxg:GridControl.Columns>
 
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="tableView" AllowHeaderNavigation="True" TotalSummaryPosition="Bottom"
