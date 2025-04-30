@@ -1,6 +1,7 @@
 ﻿using DevExpress.Data.Browsing;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
 using LanguageEditor;
 using System.Text;
@@ -24,8 +25,16 @@ namespace LanguageEditor
             Init();
         }
 
+        #region property
+        private bool IsModified { get; set; }
+        #endregion
+
         #region field
-        private ViewInfo? _View;
+        private ViewInfo _View;
+        #endregion
+
+        #region event
+
         #endregion
 
         #region init
@@ -45,20 +54,28 @@ namespace LanguageEditor
         #region command
         public DelegateCommand SaveCommand { get; set; }
         public DelegateCommand NewItemCommand { get; set; }
+        public DelegateCommand DeleteItemCommand { get; set; }
 
         private void InitCommand()
         {
             SaveCommand = new DelegateCommand(() =>
             {
-                Title = "save";
+                _View.Save();
+                IsModified = false;
             },
             () =>
             {
-                return false;
+                return IsModified;
             });
+
             NewItemCommand = new DelegateCommand(() =>
             {
                 Title = "newItem";
+            });
+
+            DeleteItemCommand = new DelegateCommand(() =>
+            {
+                Title = "deleteItem";
             });
         }
         #endregion
@@ -70,7 +87,8 @@ namespace LanguageEditor
         }
         private void InitColumn()
         {
-            grid.Columns.Add(new GridColumn() { Header = "源", FieldName = "Source" });
+            grid.Columns.Add(new GridColumn() { Header = "源", FieldName = "Source.Text" });
+            InitFormat(grid.Columns[0], "Source.IsModified == true");
             for (int i = 0; i < _View?.ColumnNames.Count; i++)
             {
                 string name = _View.ColumnNames[i];
@@ -78,73 +96,56 @@ namespace LanguageEditor
                     new GridColumn()
                     {
                         Header = name,
-                        Binding = new System.Windows.Data.Binding($"Translations[{i}]") { Mode = BindingMode.TwoWay }
+                        Binding = new System.Windows.Data.Binding($"Translations[{i}].Text") { Mode = BindingMode.TwoWay }
                     }
                 );
+                InitFormat(grid.Columns[i + 1], $"Translations[{i}].IsModified == true");
             }
 
-            GridColumn c = new GridColumn()
+            grid.Columns[0].AllowEditing = DevExpress.Utils.DefaultBoolean.False;
+        }
+        private void InitFormat(GridColumn column, string expression)
+        {
+            FormatCondition format = new FormatCondition()
             {
-                Header = "ValueA",
-            };
-            c.Binding = new System.Windows.Data.Binding("ValueA.Text") { Mode = BindingMode.TwoWay };
-            grid.Columns.Add(c);
-
-            // 创建条件格式化
-            var formatCondition = new FormatCondition()
-            {
-                FieldName = c.FieldName, //绑定到IsChanged属性
-                Expression = "ValueA.IsChanged==True", //条件表达式
-                ApplyToRow = false, //仅应用到单元格
+                FieldName = column.FieldName,
+                Expression = expression,
+                ApplyToRow = false,
             };
 
-            // 设置格式化样式
-            formatCondition.Format = new Format()
+            format.Format = new Format()
             {
                 Background = System.Windows.Media.Brushes.Yellow
             };
 
-            // 添加到 TableView 的 FormatConditions
-            tableView.FormatConditions.Add(formatCondition);
-
-            grid.Columns.Add(new GridColumn()
-            {
-                Header = "ValueB",
-                Binding = new System.Windows.Data.Binding("ValueB.Text") { Mode = BindingMode.TwoWay }
-            });
-            grid.Columns.Add(new GridColumn()
-            {
-                Header = "ValueC",
-                Binding = new System.Windows.Data.Binding("ValueC.Text") { Mode = BindingMode.TwoWay }
-            });
-            grid.Columns.Add(new GridColumn()
-            {
-                Header = "ValueD",
-                Binding = new System.Windows.Data.Binding("ValueD.Text") { Mode = BindingMode.TwoWay }
-            });
+            tableView.FormatConditions.Add(format);
         }
 
         private void tableView_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.VisibleIndex == 1)
+            if (e.Row is RowInfo r)
             {
-                if (e.Row is Person p)
-                {
-                    p.ValueA.IsChanged = true;
-                }
+                int index = e.Column.VisibleIndex;
+
+                if (index == 0)
+                    r.Source.IsModified = true;
+                else
+                    r.Translations[index - 1].IsModified = true;
             }
         }
         private void tableView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // 获取当前单元格信息
-            var view = sender as TableView;
-            var hitInfo = view?.CalcHitInfo(e.OriginalSource as DependencyObject);
-
-            if (hitInfo != null && hitInfo.RowHandle >= 0 && hitInfo.Column != null)
+            if (sender is TableView table)
             {
-                // 获取单元格的值
-                var row = grid.GetRow(hitInfo.RowHandle);
-                System.Windows.Forms.MessageBox.Show($"{(row as Person).Name}");
+                //var view = sender as TableView;
+                //var hitInfo = view?.CalcHitInfo(e.OriginalSource as DependencyObject);
+
+                //if (hitInfo != null && hitInfo.RowHandle >= 0 && hitInfo.Column != null)
+                //{
+                //    // 获取单元格的值
+                //    var row = grid.GetRow(hitInfo.RowHandle);
+                //    System.Windows.Forms.MessageBox.Show($"{(row as Person).Name}");
+                //}            
             }
         }
         #endregion

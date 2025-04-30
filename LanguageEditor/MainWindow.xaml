@@ -12,21 +12,21 @@
             <dxb:BarButtonItem Content="保存" Glyph="/Image/save.png" Command="{Binding SaveCommand}"/>
             <dxb:BarItemSeparator Content="BarItemSeparator"/>
             <dxb:BarButtonItem Content="新增项..." Glyph="/Image/new.png" Command="{Binding NewItemCommand}"/>
+            <dxb:BarButtonItem Content="删除项" Glyph="/Image/delete.png" Command="{Binding DeleteItemCommand}"/>
         </dxb:ToolBarControl>
 
-        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding Persons}"
+        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding Rows}"
                          AutoExpandAllGroups="True"
                          >
             <dxg:GridControl.GroupSummary>
                 <dxg:GridSummaryItem SummaryType="Count" />
             </dxg:GridControl.GroupSummary>
             <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="Name" Header="姓名" Width="100" Fixed="Left" AllowEditing="False" />
-                <dxg:GridColumn FieldName="Age" Header="年龄" Width="100" GroupIndex="0" />
+                <dxg:GridColumn FieldName="Level" Header="层级" Width="100" GroupIndex="0" />
             </dxg:GridControl.Columns>
 
             <dxg:GridControl.View>
-                <dxg:TableView x:Name="tableView" AllowHeaderNavigation="True" TotalSummaryPosition="Bottom" ShowEditFormOnDoubleClick="True"
+                <dxg:TableView x:Name="tableView" AllowHeaderNavigation="True" TotalSummaryPosition="Bottom"
                                CellValueChanged="tableView_CellValueChanged"
                                MouseDoubleClick="tableView_MouseDoubleClick"
                                >

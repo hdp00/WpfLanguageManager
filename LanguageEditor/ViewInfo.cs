@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -67,15 +68,27 @@ namespace LanguageEditor
 
             ColumnNames = [.. data.Config.Types.Select(type => type.Text)];
             Levels = [.. data.Config.Files.Keys.Select(level => level)];
+
             data.Data.Keys.ForEach(source =>
             {
                 TranslateDataInfo d = data.Data[source];
-                Rows.Add(new RowInfo()
+                RowInfo row = new()
                 {
                     Source = new TextInfo(source),
                     Level = d.Level,
-                    Translations = [.. d.Texts.Select(t => new TextInfo(t))]
-                });
+                    
+                };
+                //避免null
+                if (d.Texts == null)
+                { 
+                    row.Translations = new TextInfo[data.Config.Types.Length];
+                    for (int i = 0; i < row.Translations.Length; i++)
+                        row.Translations[i] = new TextInfo(string.Empty);
+                }
+                else
+                    row.Translations = [.. d.Texts.Select(t => new TextInfo(t))];
+                Rows.Add(row);
+
                 _SourceHash.Add(source);
             });
         }
@@ -101,16 +114,16 @@ namespace LanguageEditor
     //行数据
     public class RowInfo
     {
-        public TextInfo? Source { get; set; }
+        public TextInfo Source { get; set; }
         public int Level { get; set; }
-        public TextInfo[]? Translations { get; set; }
+        public TextInfo[] Translations { get; set; }
     }
     //文本数据
     public class TextInfo
     {
         public TextInfo(string text) => Text = text;
 
-        public string? Text { get; set; }
+        public string Text { get; set; }
         public bool IsModified { get; set; }
     }
 }

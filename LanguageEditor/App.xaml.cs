@@ -12,8 +12,6 @@ namespace LanguageEditor
     {
         public App()
         {
-            // Set the application theme in the constructor
-            ApplicationThemeHelper.ApplicationThemeName = "Office2019Black";
         }
     }
 

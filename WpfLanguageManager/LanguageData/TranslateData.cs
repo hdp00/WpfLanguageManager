@@ -128,9 +128,9 @@ namespace MultiLanguage
         }
         
         //层级
-        public int Level;
+        public int Level { get; set; }
         //翻译文本
-        public string[] Texts;
+        public string[] Texts { get; set; }
     }
     #endregion
 }
