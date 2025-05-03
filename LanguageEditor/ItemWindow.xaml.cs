@@ -47,6 +47,10 @@ namespace LanguageEditor
         #endregion
 
         #region event
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            txt_Source.Focus();
+        }
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
             string s = Source;
@@ -93,6 +97,7 @@ namespace LanguageEditor
             _SourceBackup = source;
             _LevelBackup = level;
         }
+
         #endregion
 
 

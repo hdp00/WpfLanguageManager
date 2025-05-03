@@ -10,7 +10,12 @@
     <PlatformTarget>x64</PlatformTarget>
 	  <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <PublishSingleFile>true</PublishSingleFile>
+    <ApplicationIcon>language.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="language.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="devexpress.wpf.grid.core" Version="24.2.6" />

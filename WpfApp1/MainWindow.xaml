@@ -8,8 +8,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <DockPanel LastChildFill="True">
-        <ComboBox x:Name="comboBox" Width="318">
-        </ComboBox>
+        <dxg:GridControl x:Name="grid" AutoGenerateColumns="AddNew" EnableSmartColumnsGeneration="True">
+            <dxg:GridControl.View>
+                <dxg:TableView AllowHeaderNavigation="True" TotalSummaryPosition="Bottom"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
 
 
     </DockPanel>

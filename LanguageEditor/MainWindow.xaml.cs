@@ -29,13 +29,37 @@ namespace LanguageEditor
             Init();
         }
 
+        #region const
+        private const string Text = "Language Editor";
+        #endregion
+
         #region property
-        private bool IsModified { get; set; }
+        private bool _IsModified;
+        private bool IsModified
+        {
+            get => _IsModified;
+            set
+            {
+                _IsModified = value;
+                Title = _IsModified ? $"{Text} *" : Text;
+                SaveCommand.RaiseCanExecuteChanged();
+            }
+        }
         public ViewInfo View { get; set; }
         #endregion
 
         #region event
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (IsModified)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("是否保存修改？", "提示", MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Cancel)
+                    e.Cancel = true;
+                else if (result == MessageBoxResult.Yes)
+                    SaveCommand.Execute(null);
+            }
+        }
         #endregion
 
         #region 直接在Xmal中为GridControl定义name会弹出DevExpress试用信息，在代码中就没问题
@@ -185,5 +209,7 @@ namespace LanguageEditor
             IsModified = true;
         }
         #endregion
+
+
     }
 }

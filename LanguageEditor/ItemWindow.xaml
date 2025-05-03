@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LanguageEditor"
         xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" x:Class="LanguageEditor.ItemWindow"
         mc:Ignorable="d"
-        Title="Source" Height="318" Width="467">
+        Title="Source" Height="325" Width="467" Loaded="Window_Loaded">
     <Grid>
         <dxlc:LayoutControl Orientation="Vertical">
             <dxlc:LayoutGroup Orientation="Vertical">
@@ -19,11 +19,11 @@
 
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup Orientation="Horizontal">
-                <dxlc:LayoutItem Margin="30, 10, 30, 10">
+                <dxlc:LayoutItem Margin="30, 10, 30, 0">
                     <Button Content="确定" Click="ButtonOK_Click" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem>
-                    <Button Content="取消" Margin="30, 10, 30, 10" Click="ButtonCancel_Click"/>
+                    <Button Content="取消" Margin="30, 10, 30, 0" Click="ButtonCancel_Click"/>
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>

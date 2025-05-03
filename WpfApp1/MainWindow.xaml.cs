@@ -18,14 +18,6 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-
-            comboBox.Items.Add(5);
-            comboBox.Items.Add(4);
-            comboBox.Items.Add(3);
-            comboBox.Items.Add(2);
-            comboBox.Items.Add(1);
-            comboBox.SelectedItem = 7;
-            object o = comboBox.SelectedItem;
         }
     }
 }

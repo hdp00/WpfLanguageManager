@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LanguageEditor"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" x:Class="LanguageEditor.MainWindow"
         mc:Ignorable="d"
-        Title="Language Editor" Height="450" Width="800">
+        Title="Language Editor" Height="450" Width="800" WindowState="Maximized" Closing="Window_Closing">
     <DockPanel x:Name="dockPanel" LastChildFill="True">
         <dxb:ToolBarControl HorizontalAlignment="Left" DockPanel.Dock="Top">
             <dxb:BarButtonItem Content="保存" Glyph="/Image/save.png" Command="{Binding SaveCommand}"/>
