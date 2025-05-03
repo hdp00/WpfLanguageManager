@@ -56,7 +56,7 @@ namespace LanguageEditor
             string s = Source;
             if (string.IsNullOrEmpty(s))
             {
-                System.Windows.Forms.MessageBox.Show("不能输入空值");
+                System.Windows.MessageBox.Show("不能输入空值", "提示");
                 return;
             }
 
@@ -64,7 +64,7 @@ namespace LanguageEditor
             {
                 if (View.SourceHash.Contains(s))
                 {
-                    System.Windows.Forms.MessageBox.Show("文本已存在");
+                    System.Windows.MessageBox.Show(this, "文本已存在", "提示");
                     return;
                 }
                 else

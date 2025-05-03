@@ -42,7 +42,7 @@ namespace LanguageEditor
             {
                 _IsModified = value;
                 Title = _IsModified ? $"{Text} *" : Text;
-                SaveCommand.RaiseCanExecuteChanged();
+                //SaveCommand.RaiseCanExecuteChanged();
             }
         }
         public ViewInfo View { get; set; }
@@ -130,22 +130,19 @@ namespace LanguageEditor
         }
         private void InitColumn()
         {
-            grid.Columns.Add(new GridColumn() { Header = "源", FieldName = "Source.Text" });
-            grid.Columns[0].AllowEditing = DevExpress.Utils.DefaultBoolean.False;
-
-            for (int i = 0; i < View?.ColumnNames.Count; i++)
+            for (int i = 0; i < View.ColumnNames.Count; i++)
             {
-                string name = View.ColumnNames[i];
                 grid.Columns.Add(
                     new GridColumn()
                     {
-                        Header = name,
-                        Binding = new System.Windows.Data.Binding($"Translations[{i}].Text") { Mode = BindingMode.TwoWay }
+                        Header = View.ColumnNames[i],
+                        Binding = new System.Windows.Data.Binding($"Texts[{i}].Text") { Mode = BindingMode.TwoWay }
                     }
                 );
             }
 
             grid.Columns.Add(new GridColumn() { Header = "文件", FieldName = "Level", GroupIndex = 0 });
+            grid.Columns[0].AllowEditing = DevExpress.Utils.DefaultBoolean.False;
         }
         private void InitFormat()
         {
@@ -169,20 +166,20 @@ namespace LanguageEditor
                 tableView.FormatConditions.Add(condiation);
             }
         }
-
+        //设置修改状态
         private void tableView_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             if (e.Row is RowInfo r)
             {
                 int index = e.Column.VisibleIndex;
+                if (index < 0 || index >= r.Texts.Count)
+                    return;
 
-                if (index == 0)
-                    r.Source.IsModified = true;
-                else
-                    r.Translations[index - 1].IsModified = true;
+                r.Texts[index].IsModified = true;
                 IsModified = true;
             }
         }
+        //编辑源文本
         private void tableView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is TableView table)
