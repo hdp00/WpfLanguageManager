@@ -49,6 +49,17 @@ namespace LanguageEditor
                 row.Translations[i] = new TextInfo(string.Empty);
             return row;
         }
+        public bool DeleteRow(string source)
+        { 
+            if (SourceHash.Contains(source))
+            {
+                Rows.Remove(Rows.FirstOrDefault(r => r.Source.Text == source));
+                SourceHash.Remove(source);
+                return true;
+            }
+
+            return true;
+        }
         #endregion
 
         #region private function 

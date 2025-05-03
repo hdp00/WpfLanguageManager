@@ -112,7 +112,12 @@ namespace LanguageEditor
 
             DeleteItemCommand = new DelegateCommand(() =>
             {
-                Title = "deleteItem";
+                if (grid.SelectedItem is RowInfo row
+                    && System.Windows.MessageBox.Show("是否删除当前项？", "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    View.DeleteRow(row.Source.Text);
+                    IsModified = true;
+                }
             });
         }
         #endregion
