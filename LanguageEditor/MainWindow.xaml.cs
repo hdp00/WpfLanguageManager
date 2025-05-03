@@ -38,6 +38,10 @@ namespace LanguageEditor
 
         #endregion
 
+        #region 直接在Xmal中为GridControl定义name会弹出DevExpress试用信息，在代码中就没问题
+        public GridControl grid => dockPanel.Children[1] as GridControl;
+        #endregion
+
         #region init
         private void Init()
         {

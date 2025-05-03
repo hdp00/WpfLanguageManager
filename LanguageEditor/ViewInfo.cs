@@ -40,7 +40,7 @@ namespace LanguageEditor
         #region public function
         public RowInfo CreateRow()
         {
-            RowInfo row = new RowInfo();
+            RowInfo row = new ();
             row.Source = new TextInfo(string.Empty);
             row.Translations = new TextInfo[ColumnNames.Count];
             for (int i = 0; i < row.Translations.Length; i++)

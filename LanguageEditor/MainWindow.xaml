@@ -7,7 +7,7 @@
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" x:Class="LanguageEditor.MainWindow"
         mc:Ignorable="d"
         Title="Language Editor" Height="450" Width="800">
-    <DockPanel LastChildFill="True">
+    <DockPanel x:Name="dockPanel" LastChildFill="True">
         <dxb:ToolBarControl HorizontalAlignment="Left" DockPanel.Dock="Top">
             <dxb:BarButtonItem Content="保存" Glyph="/Image/save.png" Command="{Binding SaveCommand}"/>
             <dxb:BarItemSeparator Content="BarItemSeparator"/>
@@ -15,7 +15,7 @@
             <dxb:BarButtonItem Content="删除项" Glyph="/Image/delete.png" Command="{Binding DeleteItemCommand}"/>
         </dxb:ToolBarControl>
 
-        <dxg:GridControl x:Name="grid" VerticalAlignment="Stretch" ItemsSource="{Binding View.Rows}"
+        <dxg:GridControl VerticalAlignment="Stretch" ItemsSource="{Binding View.Rows}"
                          AutoExpandAllGroups="True"
                          >
             <dxg:GridControl.GroupSummary>
